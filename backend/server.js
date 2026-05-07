@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const porta = 3000;
+const porta = process.env.PORT || 3000;
 
 // Permite que o seu HTML (Frontend) converse com a API sem bloqueios de segurança
 app.use(cors());
@@ -36,12 +36,14 @@ const upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
 
 // 1. Criando a conexão com o banco de dados
+// 1. Criando a conexão com o banco de dados (Preparado para a Nuvem)
 const conexao = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'alunolab', // A senha do seu MySQL Workbench
-    database: 'power_soccer' // O nome do banco que criamos
-});
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'alunolab', 
+    database: process.env.DB_NAME || 'power_soccer',
+    port: process.env.DB_PORT || 3306
+}); 
 
 // 2. Testando a conexão na hora que o servidor ligar
 conexao.connect((erro) => {
