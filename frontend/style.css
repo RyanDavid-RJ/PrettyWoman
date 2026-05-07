@@ -5,51 +5,47 @@
 
 :root {
   /* --- FONTES --- */
-  --font-primary: "Nunito", sans-serif;
-  --font-titles: "Fredoka", sans-serif;
+  --font-primary: "Varela Round", "Nunito", sans-serif;
+  --font-titles: "Fredoka", "Varela Round", sans-serif;
 
   /* --- BORDAS E SOMBRAS --- */
-  --radius-duo: 16px; /* Arredondamento dos cards */
-  --shadow-duo: 0px 4px 0px rgba(0, 0, 0, 0.2); /* Sombra estilo botão do Duolingo */
+  --radius-duo: 16px;
+  --shadow-duo: 0px 4px 0px rgba(0, 0, 0, 0.2);
 
   /* --- MODO ESCURO (Padrão) --- */
-  --bg-primary: #2d2d2d; /* Cor do fundo da tela */
-  --bg-secondary: #3d3d3d; /* Cor dos cards e cabeçalho */
-  --text-main: #eaeaea; /* Cor do texto principal */
-  --border-ui: #444444; /* Cor das linhas separadoras */
-  --input-bg: #4a4a4a; /* Fundo das caixinhas de digitar */
+  --bg-primary: #2d2d2d;
+  --bg-secondary: #3d3d3d;
+  --text-main: #eaeaea;
+  --border-ui: #444444;
+  --input-bg: #4a4a4a;
 
   /* --- PALETA DE CORES PRINCIPAL --- */
-  --duo-green-primary: #58cc02; /* Verde principal (Botões de Salvar, Campo) */
-  --duo-blue: #1cb0f6; /* Azul (Passes Certos, Links) */
-  --duo-red: #ff4b4b; /* Vermelho (Passes Errados, Botão Sair, Excluir) */
-  --duo-orange: #ff9600; /* Laranja (Interceptação, Modo Edição) */
-  --duo-purple: #9c27b0; /* Roxo (Finalizações, IA) */
-  --duo-yellow: #ffc800; /* Amarelo (Gols) */
+  --duo-green-primary: #58cc02;
+  --duo-blue: #1cb0f6;
+  --duo-red: #ff4b4b;
+  --duo-orange: #ff9600;
+  --duo-purple: #9c27b0;
+  --duo-yellow: #ffc800;
 }
 
 /* --- MODO CLARO --- */
 body.light-mode {
-  --bg-primary: #f0f5f9;
+  --bg-primary: #f0f9f2;
   --bg-secondary: #ffffff;
-  --text-main: #333333;
+  --text-main: #2a2a2a;
   --border-ui: #d1d1d1;
-  --input-bg: #f0f0f0;
+  --input-bg: #eaeaea;
 }
 
 /* --- MODO DALTÔNICO --- */
 body.daltonico-mode {
-  /* Troca o Verde e Vermelho por cores seguras para daltônicos */
-  --duo-green-primary: #1cb0f6; /* Vira Azul */
-  --duo-red: #ff9600; /* Vira Laranja */
+  --duo-green-primary: #1cb0f6;
+  --duo-red: #ff9600;
 }
 
 /* ==================================================================
-   2. ESTILOS GLOBAIS E COMPONENTES
-   (O resto do CSS antigo vem aqui embaixo...)
+   2. ESTILOS GLOBAIS E COMPONENTES Base
    ================================================================== */
-
-/* APLICANDO AS VARIÁVEIS NO SISTEMA */
 body {
   background-color: var(--bg-primary);
   color: var(--text-main);
@@ -85,23 +81,18 @@ span {
   color: var(--duo-green-primary);
 }
 
-/* Cabeçalho */
 .duo-header {
-  background-color: var(--duo-gray-2);
   padding: 10px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #444;
+  border-bottom: 2px solid var(--border-ui);
 }
-
 .logo {
   font-size: 24px;
   font-weight: bold;
   font-family: var(--font-titles);
 }
-
-/* Layout Geral */
 .layout-principal {
   display: flex;
   flex: 1;
@@ -109,50 +100,38 @@ span {
   padding: 20px;
   gap: 20px;
 }
-
-/* Classes Utilitárias do Design System */
-.duo-container {
-  background-color: var(--duo-gray-2);
+.duo-container,
+.duo-card {
   padding: 20px;
   border-radius: var(--radius-duo);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.duo-card {
-  background-color: var(--duo-gray-2);
-  border-radius: var(--radius-duo);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Coluna Esquerda & Direita */
+/* Componentes Prancheta */
 .titulares,
 .historico {
   width: 300px;
 }
-
 .jogador {
   display: flex;
   align-items: center;
   padding: 12px;
-  background-color: #4a4a4a;
   margin-bottom: 12px;
   border-radius: 12px;
   cursor: pointer;
   transition:
     transform 0.2s,
-    background-color 0.3s;
+    filter 0.3s;
   font-weight: bold;
 }
-
 .jogador:hover {
-  background-color: #5a5a5a;
+  filter: brightness(1.2);
   transform: scale(1.02);
 }
 .jogador.ativo {
   border: 3px solid var(--duo-green-primary);
   background-color: rgba(88, 204, 2, 0.1);
 }
-
 .foto {
   width: 40px;
   height: 40px;
@@ -166,8 +145,6 @@ span {
   font-size: 18px;
   color: white;
 }
-
-/* Área do Campo */
 .area-campo {
   flex: 1;
   display: flex;
@@ -175,28 +152,23 @@ span {
   align-items: center;
   gap: 15px;
 }
-
 .campo-container {
   width: 100%;
   max-width: 800px;
-  aspect-ratio: 8 / 5; /* ISTO RESOLVE O PROBLEMA DO ZOOM E DAS ÁREAS CINZENTAS */
+  aspect-ratio: 8 / 5;
   position: relative;
   cursor: crosshair;
-  overflow: hidden; /* Corta qualquer clique que tente sair do campo */
+  overflow: hidden;
 }
-
 .linha-tempo-container {
   width: 800px;
   padding: 15px 20px;
 }
-
 input[type="range"] {
   width: 100%;
   margin-top: 10px;
   cursor: pointer;
 }
-
-/* Reservas (Integrados na área do campo) */
 .reservas {
   width: 800px;
   padding: 15px;
@@ -215,8 +187,6 @@ input[type="range"] {
   margin-bottom: 0;
   font-size: 14px;
 }
-
-/* Histórico (Coluna Direita) */
 .historico h3 {
   color: var(--duo-blue);
 }
@@ -225,22 +195,18 @@ input[type="range"] {
   overflow-y: auto;
   max-height: calc(100vh - 120px);
 }
-
 .item-historico {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 15px;
-  background-color: #444;
   margin-bottom: 8px;
   border-radius: 10px;
   font-size: 14px;
 }
-
 .info-historico strong {
   color: var(--duo-green-primary);
 }
-
 .btn-excluir {
   background: none;
   border: none;
@@ -254,10 +220,9 @@ input[type="range"] {
   transform: scale(1.1);
 }
 
-/* Modal de Ações (Design Arredondado Duolingo) */
+/* Modais e Botões */
 .duo-modal {
   position: absolute;
-  background-color: var(--duo-gray-2);
   border: 3px solid var(--duo-green-primary);
   padding: 20px;
   border-radius: var(--radius-duo);
@@ -265,19 +230,15 @@ input[type="range"] {
   z-index: 100;
   width: 200px;
 }
-
 .escondido {
   display: none;
 }
-
-/* Botões de Ação (Estilo Duolingo com Sombra 3D) */
 .botoes-acao {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin: 20px 0;
 }
-
 .btn-acao {
   padding: 12px;
   cursor: pointer;
@@ -286,21 +247,18 @@ input[type="range"] {
   border-radius: 12px;
   font-weight: bold;
   font-size: 15px;
-  box-shadow: var(--shadow-duo); /* Sombra estilo Duolingo */
+  box-shadow: var(--shadow-duo);
   transition:
     filter 0.2s,
     transform 0.1s;
 }
-
 .btn-acao:active {
   transform: translateY(3px);
   box-shadow: none;
-} /* Simula o clique */
+}
 .btn-acao:hover {
   filter: brightness(1.1);
 }
-
-/* Paleta de Cores para Botões de Ação (Referências imagem 2, 3) */
 .btn-duo-primary {
   background-color: var(--duo-green-primary);
 }
@@ -319,8 +277,7 @@ input[type="range"] {
 .btn-duo-amarelo {
   background-color: var(--duo-yellow);
   color: #333;
-} /* Amarelo precisa texto escuro */
-
+}
 .btn-cancelar {
   display: block;
   width: 100%;
@@ -336,23 +293,19 @@ input[type="range"] {
   color: var(--duo-red);
 }
 
-/* ========================================= */
-/* AS BOLINHAS DO MAPA (O que estava faltando) */
-/* ========================================= */
+/* Mapa e Range */
 .ponto {
   position: absolute;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  transform: translate(-50%, -50%); /* Centraliza o ponto exato no mouse */
-  border: 3px solid var(--duo-white); /* Borda mais grossa estilo cartoon */
+  transform: translate(-50%, -50%);
+  border: 3px solid #fff;
   cursor: pointer;
-  box-shadow: 0px 3px 0px rgba(0, 0, 0, 0.3); /* Sombra 3D */
+  box-shadow: 0px 3px 0px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s;
   z-index: 5;
 }
-
-/* Cores de cada ação conectadas com a nossa paleta Duolingo */
 .passe-certo {
   background-color: var(--duo-blue);
 }
@@ -367,24 +320,19 @@ input[type="range"] {
 }
 .gol {
   background-color: var(--duo-yellow);
-  border-color: #333; /* Borda escura para dar destaque no amarelo */
+  border-color: #333;
   width: 22px;
   height: 22px;
 }
-
-/* Customização da Barra de Tempo (Mobile/Duolingo) */
 input[type="range"] {
   -webkit-appearance: none;
-  appearance: none; /* <-- Adicione esta linha para tirar o aviso */
+  appearance: none;
   width: 100%;
   height: 8px;
-  background: #444;
   border-radius: 5px;
   outline: none;
   margin-top: 15px;
 }
-
-/* A "bolinha" (thumb) da barra */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -398,69 +346,55 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow 0.2s;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
-
-/* Quando o usuário clica/pressiona o dedo na bolinha */
 input[type="range"]:active::-webkit-slider-thumb {
-  transform: scale(1.5); /* Ela cresce */
+  transform: scale(1.5);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
 }
-
-/* Animação para destacar a bolinha no mapa */
 .ponto-destaque {
   transform: translate(-50%, -50%) scale(2.5) !important;
   box-shadow: 0 0 20px white !important;
   z-index: 100 !important;
   transition: all 0.3s ease;
 }
-
-/* Escudo bloqueador de cliques (Backdrop) */
 .bloqueio-tela {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo levemente escurecido */
-  z-index: 90; /* Fica acima de tudo, mas abaixo do modal (que é 100) */
-  display: none; /* Começa escondido */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  display: none;
 }
-
-/* Quando adicionamos esta classe, o escudo aparece e bloqueia tudo */
 .bloqueio-tela.ativo {
   display: block;
 }
 
-/* ==========================================
-   TELA DE ABERTURA (SPLASH SCREEN)
-   ========================================== */
+/* Splash Screen */
 .splash-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: var(--bg-primary); /* Respeita o modo Escuro/Claro! */
+  background-color: var(--bg-primary);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 999999; /* Fica acima de absolutamente tudo */
+  z-index: 999999;
   transition:
     opacity 0.5s ease-in-out,
     visibility 0.5s;
 }
-
 .splash-logo {
   font-family: var(--font-titles);
   font-size: 64px;
   font-weight: bold;
   color: var(--text-main);
   margin-bottom: 20px;
-  /* Faz o logotipo "pulsar" como se estivesse respirando */
   animation: pulsarLogo 1.2s infinite alternate;
 }
-
-/* Um círculo giratório genérico enquanto não temos o bonequinho */
 .splash-loader {
   width: 50px;
   height: 50px;
@@ -469,7 +403,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   border-radius: 50%;
   animation: girarLoader 1s linear infinite;
 }
-
 @keyframes pulsarLogo {
   0% {
     transform: scale(1);
@@ -478,7 +411,6 @@ input[type="range"]:active::-webkit-slider-thumb {
     transform: scale(1.1);
   }
 }
-
 @keyframes girarLoader {
   0% {
     transform: rotate(0deg);
@@ -487,17 +419,12 @@ input[type="range"]:active::-webkit-slider-thumb {
     transform: rotate(360deg);
   }
 }
-
-/* A classe mágica que o JS vai colocar para a tela sumir */
 .esconder-splash {
   opacity: 0;
   visibility: hidden;
 }
 
-/* ==========================================/
-   ESTILOS ESPECÍFICOS DA HOME (TELA DE SELEÇÃO)
-   ========================================== */
-
+/* Páginas Específicas */
 .home-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -527,17 +454,12 @@ input[type="range"]:active::-webkit-slider-thumb {
   font-size: 14px;
 }
 
-/* ==========================================/
-   ESTILOS  DA TELA DE DASHBOARD (TELA DE ANÁLISE)
-   ========================================== */
-
 .dashboard-container {
   max-width: 1200px;
   margin: 20px auto;
   padding: 0 20px;
 }
 .filtro-container {
-  background: var(--bg-secondary);
   padding: 15px 25px;
   border-radius: var(--radius-duo);
   display: flex;
@@ -561,7 +483,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   flex: 1;
   min-width: 200px;
 }
-
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -569,7 +490,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   margin-bottom: 30px;
 }
 .kpi-card {
-  background: var(--bg-secondary);
   padding: 20px;
   border-radius: var(--radius-duo);
   text-align: center;
@@ -587,7 +507,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   font-weight: bold;
   font-family: var(--font-titles);
 }
-
 .kpi-gols {
   border-bottom-color: var(--duo-yellow);
 }
@@ -612,10 +531,7 @@ input[type="range"]:active::-webkit-slider-thumb {
 .kpi-intercep .valor {
   color: var(--duo-orange);
 }
-
-/* Painel da IA */
 .painel-ia {
-  background: var(--bg-secondary);
   padding: 20px;
   border-radius: var(--radius-duo);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -625,10 +541,8 @@ input[type="range"]:active::-webkit-slider-thumb {
 .painel-ia p {
   font-size: 16px;
   line-height: 1.6;
-  color: var(--text-main);
   margin-top: 10px;
 }
-
 .visao-dupla {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -639,15 +553,14 @@ input[type="range"]:active::-webkit-slider-thumb {
     grid-template-columns: 1fr;
   }
 }
-
 .painel-grafico,
 .painel-heatmap {
-  background: var(--bg-secondary);
   padding: 20px;
   border-radius: var(--radius-duo);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-.heatmap-container {
+.heatmap-container,
+.heatmap-container-mini {
   position: relative;
   width: 100%;
   aspect-ratio: 8/5;
@@ -655,6 +568,9 @@ input[type="range"]:active::-webkit-slider-thumb {
   border-radius: 15px;
   overflow: hidden;
   margin-top: 15px;
+}
+.heatmap-container-mini {
+  margin-top: 0;
 }
 .mancha-calor {
   position: absolute;
@@ -673,10 +589,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   z-index: 10;
 }
 
-/* ==========================================/
-   ESTILOS  DA TELA DE JOGADORES
-   ========================================== */
-
 .elenco-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -690,39 +602,12 @@ input[type="range"]:active::-webkit-slider-thumb {
     grid-template-columns: 1fr;
   }
 }
-
-.form-grupo {
-  margin-bottom: 15px;
-  text-align: left;
-}
-.form-grupo label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-  color: #aaa;
-}
-.form-grupo input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  background: var(--input-bg);
-  color: var(--text-main);
-  font-family: var(--font-primary);
-}
-.form-grupo input:focus {
-  border-color: var(--duo-green-primary);
-  outline: none;
-}
-
-/* Grid dos Jogadores */
 .grid-jogadores {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 15px;
 }
 .card-atleta {
-  background: var(--bg-secondary);
   border-radius: var(--radius-duo);
   padding: 15px;
   text-align: center;
@@ -749,8 +634,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   font-weight: bold;
   border: 4px solid var(--bg-primary);
 }
-
-/* Modal do Raio-X do Jogador */
 .modal-perfil {
   width: 90%;
   max-width: 800px;
@@ -786,57 +669,12 @@ input[type="range"]:active::-webkit-slider-thumb {
 .kpi-mini .val {
   font-size: 24px;
   font-weight: bold;
-  color: var(--text-main);
 }
-
-.heatmap-container-mini {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 8/5;
-  background-color: var(--duo-green-primary);
-  border-radius: 15px;
-  overflow: hidden;
-}
-.mancha-calor {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 0, 0, 0.8) 0%,
-    rgba(255, 255, 0, 0.5) 40%,
-    rgba(0, 0, 0, 0) 70%
-  );
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  mix-blend-mode: screen;
-  z-index: 10;
-}
-
-/* ==========================================/
-   ESTILOS  DA TELA DE NOVA-PARTIDA
-   ========================================== */
 
 .config-container {
   max-width: 600px;
   margin: 30px auto;
   padding-bottom: 30px;
-}
-.form-grupo {
-  margin-bottom: 15px;
-}
-.form-grupo input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  font-family: var(--font-primary);
-  font-size: 16px;
-}
-.form-grupo input:focus {
-  border-color: var(--duo-green-primary);
-  outline: none;
 }
 .slots-grid {
   display: flex;
@@ -894,7 +732,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   color: white;
 }
 .slot.preenchido .slot-nome {
-  color: var(--text-main);
   font-weight: bold;
 }
 .gaveta-overlay {
@@ -929,7 +766,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   display: flex;
   align-items: center;
   padding: 15px;
-  background: var(--input-bg);
   margin-bottom: 10px;
   border-radius: 12px;
   cursor: pointer;
@@ -942,18 +778,6 @@ input[type="range"]:active::-webkit-slider-thumb {
   height: 40px;
   margin-right: 15px;
 }
-#mensagem-erro {
-  color: var(--duo-red);
-  text-align: center;
-  margin-top: 15px;
-  font-weight: bold;
-  display: none;
-  font-size: 14px;
-}
-
-/* ==========================================/
-   ESTILOS  DA TELA DE LOGIN
-   ========================================== */
 
 body.login-page {
   display: flex;
@@ -962,7 +786,6 @@ body.login-page {
   height: 100vh;
 }
 .login-box {
-  background-color: var(--bg-secondary);
   padding: 40px;
   border-radius: var(--radius-duo);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
@@ -980,12 +803,6 @@ body.login-page {
   margin-bottom: 30px;
   font-size: 15px;
 }
-#mensagem-erro {
-  color: var(--duo-red);
-  margin-top: 15px;
-  font-weight: bold;
-  display: none;
-}
 .btn-dev {
   margin-top: 20px;
   background: none;
@@ -1000,14 +817,250 @@ body.login-page {
   color: var(--text-main);
   border-color: var(--text-main);
 }
+.partida-card {
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid transparent;
+  transition: 0.2s;
+}
+.partida-card:hover {
+  border-color: var(--duo-blue);
+  transform: scale(1.02);
+  filter: brightness(1.2);
+}
 
-/* Engrenagem flutuante no Login */
-#btn-settings-login {
+/* ==================================================================
+   3. CLASSES UTILITÁRIAS E OTIMIZAÇÕES (Para HTML Limpo)
+   ================================================================== */
+.header-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.header-link {
+  color: #aaa;
+  text-decoration: none;
+  font-weight: bold;
+}
+.header-link:hover {
+  color: var(--text-main);
+}
+.header-user-name {
+  color: #aaa;
+  font-weight: bold;
+}
+.btn-header-sair {
+  background: none;
+  border: none;
+  color: var(--duo-red);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+.btn-header-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  outline: none;
+}
+.btn-header-icon:hover {
+  transform: scale(1.1);
+}
+.btn-flutuante {
   position: absolute;
   top: 20px;
   right: 20px;
   background: none;
   border: none;
-  font-size: 24px;
   cursor: pointer;
+  font-size: 24px;
+}
+
+.modal-centralizado {
+  width: 320px;
+  text-align: center;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+}
+.modal-botoes-coluna {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+.modal-titulo-central {
+  color: var(--text-main);
+  margin-bottom: 15px;
+}
+.texto-alerta {
+  margin: 15px 0;
+  font-size: 15px;
+  color: var(--text-main);
+}
+.texto-erro {
+  color: var(--duo-red);
+  font-size: 13px;
+  font-weight: bold;
+  display: none;
+  margin-bottom: 10px;
+  margin-top: 15px;
+}
+
+.form-grupo {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #aaa;
+}
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: var(--input-bg);
+  color: var(--text-main);
+  font-family: var(--font-primary);
+  font-size: 16px;
+}
+.form-input:focus {
+  border-color: var(--duo-green-primary);
+  outline: none;
+}
+
+.btn-config {
+  width: 100%;
+  background: var(--input-bg);
+  color: var(--text-main);
+  border: 2px solid transparent;
+}
+.btn-config:hover {
+  border-color: var(--border-ui);
+}
+.spacing-top {
+  margin-top: 20px;
+}
+
+.input-modal-destaque {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-main);
+  border: none;
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+.input-modal-padrao {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-main);
+  border: none;
+  text-align: center;
+}
+.label-modal {
+  font-size: 14px;
+  color: #aaa;
+  display: block;
+  margin-top: 10px;
+  text-align: left;
+}
+.select-modal {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text-main);
+  border: none;
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+
+/* ==================================================================
+   4. RESPONSIVIDADE (MOBILE FIRST & MEDIA QUERIES)
+   O sistema se adapta automaticamente a celulares e tablets
+   ================================================================== */
+
+@media (max-width: 1024px) {
+  /* 1. Transforma o layout horizontal (3 colunas) numa lista vertical rolável */
+  .layout-principal {
+    flex-direction: column;
+    overflow-y: auto; /* Libera a rolagem na tela */
+    padding: 10px;
+  }
+
+  /* 2. Remove as larguras fixas para não vazar da tela do celular */
+  .titulares,
+  .historico,
+  .linha-tempo-container,
+  .reservas {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* 3. Coloca os jogadores titulares lado a lado (em grade) para poupar espaço */
+  .titulares {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .titulares .jogador {
+    margin-bottom: 0;
+  }
+
+  /* 4. O Header precisa de mais respiro para não espremer os botões */
+  .duo-header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    text-align: center;
+  }
+  .header-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* 5. Ajeita o menu de Configurações para telas pequenas */
+  .config-container {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  /* 6. Ajustes extras para celulares de tela muito pequena */
+  .titulares {
+    grid-template-columns: 1fr 1fr; /* 2 jogadores por linha */
+  }
+
+  .splash-logo {
+    font-size: 40px; /* Diminui a logo de abertura */
+  }
+
+  /* Diminui o texto dos KPIs no Dashboard para caber melhor */
+  .kpi-card .valor {
+    font-size: 28px;
+  }
+  .kpi-card {
+    padding: 15px;
+  }
 }

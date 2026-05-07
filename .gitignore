@@ -1,0 +1,9 @@
+# Ignorar dependências do Node.js
+backend/node_modules/
+
+# Ignorar fotos que os usuários fizerem upload (para não poluir o repositório)
+backend/uploads/
+
+# Ignorar arquivos de sistema operacional
+.DS_Store
+Thumbs.db

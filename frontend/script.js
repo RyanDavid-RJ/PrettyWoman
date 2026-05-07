@@ -162,6 +162,24 @@ inputTempo.addEventListener('change', (e) => {
     }
 });
 
+// ====== NOVOS BOTÕES DE AJUSTE FINO (-1s e +1s) ======
+const btnMenosTempo = document.getElementById('btn-menos-tempo');
+const btnMaisTempo = document.getElementById('btn-mais-tempo');
+
+function ajustarTempoFino(segundos) {
+    let tempoAtual = parseInt(inputTempo.value) + segundos;
+    if (tempoAtual < 0) tempoAtual = 0;
+    if (tempoAtual > 2400) tempoAtual = 2400;
+    inputTempo.value = tempoAtual;
+    
+    // Dispara os eventos como se o utilizador tivesse arrastado a barra manualmente
+    inputTempo.dispatchEvent(new Event('input'));
+    inputTempo.dispatchEvent(new Event('change'));
+}
+
+if (btnMenosTempo) btnMenosTempo.addEventListener('click', () => ajustarTempoFino(-1));
+if (btnMaisTempo) btnMaisTempo.addEventListener('click', () => ajustarTempoFino(1));
+
 function atualizarBarraDeTempo(tempoTexto) {
     const p = tempoTexto.split(':'); if(p.length !== 2) return;
     inputTempo.value = (parseInt(p[0]) * 60) + parseInt(p[1]);
@@ -178,6 +196,10 @@ document.addEventListener('click', (e) => {
     const titularAtivo = document.querySelector('.titulares .jogador.ativo');
 
     if (isReserva && titularAtivo) {
+
+        // TRAVA ANTI-PARADOXO: Ninguém entra ou sai se já houver um evento neste segundo exato!
+        const lanceNoMesmoSegundo = lancesDaPartida.some(l => l.minuto_video === tempoAtualFormatado);
+        if (lanceNoMesmoSegundo) return mostrarAlertaCustom("Tempo Ocupado!", "Já existe um registro neste exato segundo da partida. Avance ou recue o tempo em 1s na barra antes de fazer a substituição.");
         if(modoVisualizacao) return mostrarAlertaCustom("Modo Leitura", "A tela está travada. Clique em 'Alterar Partida' para fazer substituições.");
         
         idSaindo = parseInt(titularAtivo.getAttribute('data-id')); idEntrando = parseInt(boxJogador.getAttribute('data-id'));
@@ -249,9 +271,9 @@ svgQuadra.addEventListener('click', (e) => {
 
     if (!estaEmQuadra(atletaIdSelecionado, parseInt(inputTempo.value))) return mostrarAlertaCustom("Erro", `Impossível registrar lance. O ${jogadorSelecionado} está no banco neste momento.`);
 
-    const lanceNoMesmoSegundo = lancesDaPartida.some(l => l.minuto_video === tempoAtualFormatado && l.atleta_id === atletaIdSelecionado);
-    if (lanceNoMesmoSegundo) return mostrarAlertaCustom("Rápido Demais!", "Já existe uma ação gravada para este jogador neste exato segundo. Avance o tempo na barra.");
-
+    // TRAVA ANTI-PARADOXO: A bola é uma só! Ninguém joga se o segundo já estiver ocupado.
+    const lanceNoMesmoSegundo = lancesDaPartida.some(l => l.minuto_video === tempoAtualFormatado);
+    if (lanceNoMesmoSegundo) return mostrarAlertaCustom("Segundo Ocupado!", "Já existe uma ação anotada neste segundo exato. Avance ou recue o tempo em 1s clicando nos botões [-1s] ou [+1s] para registrar o novo lance.");
     tituloModal.textContent = `${jogadorSelecionado} aos ${tempoAtualFormatado}`;
     modalAcao.style.position = 'fixed'; modalAcao.style.left = '50%'; modalAcao.style.top = '50%'; modalAcao.style.transform = 'translate(-50%, -50%)';
     escudoBloqueio.classList.add('ativo'); modalAcao.classList.remove('escondido');

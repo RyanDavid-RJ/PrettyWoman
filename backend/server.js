@@ -226,10 +226,7 @@ app.delete('/api/atletas/:id', (req, res) => {
     });
 });
 
-// 4. Ligando o servidor
-app.listen(porta, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${porta}`);
-});
+
 
 // ROTA DE LOGIN COM AUTO-REGISTO
 app.post('/api/login', (req, res) => {
@@ -283,3 +280,7 @@ app.get('/api/partidas', (req, res) => {
     });
 });
 
+// 4. Ligando o servidor
+app.listen(porta, () => {
+    console.log(`🚀 Servidor rodando em http://localhost:${porta}`);
+});

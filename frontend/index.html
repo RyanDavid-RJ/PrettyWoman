@@ -2,7 +2,6 @@
 <html lang="pt-BR">
   <head>
     <script>
-      // SEGURANÇA
       const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
       if (!usuarioLogado) window.location.href = "login.html";
     </script>
@@ -18,7 +17,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
-
     <script src="tema.js"></script>
   </head>
   <body>
@@ -26,39 +24,13 @@
 
     <header class="duo-header">
       <div class="logo"><span class="cor-duo">Power</span>Scout</div>
-
-      <div style="display: flex; gap: 15px; align-items: center">
-        <a
-          href="#"
-          id="btn-voltar-menu"
-          style="color: #aaa; text-decoration: none; font-weight: bold"
+      <div class="header-actions">
+        <a href="#" id="btn-voltar-menu" class="header-link"
           >⬅ Menu Principal</a
         >
-        <span id="nome-treinador" style="color: #aaa; font-weight: bold"></span>
-        <button
-          id="btn-sair"
-          style="
-            background: none;
-            border: none;
-            color: var(--duo-red);
-            cursor: pointer;
-            font-weight: bold;
-          "
-        >
-          Sair 🚪
-        </button>
-        <button
-          id="btn-settings"
-          style="
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            outline: none;
-          "
-        >
-          ⚙️
-        </button>
+        <span id="nome-treinador" class="header-user-name"></span>
+        <button id="btn-sair" class="btn-header-sair">Sair 🚪</button>
+        <button id="btn-settings" class="btn-header-icon">⚙️</button>
       </div>
     </header>
 
@@ -144,11 +116,67 @@
         </div>
 
         <div class="linha-tempo-container duo-card">
-          <label for="tempo-video"
-            >⏱️ Tempo de Jogo:
-            <span id="tempo-display" class="cor-duo">00:00</span></label
+          <label
+            for="tempo-video"
+            style="display: flex; align-items: center; gap: 10px"
           >
-          <input type="range" id="tempo-video" min="0" max="2400" value="0" />
+            ⏱️ Tempo de Jogo:
+            <span
+              id="tempo-display"
+              style="
+                color: var(--text-main);
+                font-weight: 900;
+                font-size: 1.2em;
+                background: var(--bg-primary);
+                padding: 4px 12px;
+                border-radius: 8px;
+                border: 2px solid var(--border-ui);
+                letter-spacing: 1px;
+              "
+              >00:00</span
+            >
+          </label>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              align-items: center;
+              margin-top: 10px;
+            "
+          >
+            <button
+              id="btn-menos-tempo"
+              class="btn-acao btn-config"
+              style="
+                width: auto;
+                padding: 5px 15px;
+                margin: 0;
+                border-radius: 8px;
+              "
+            >
+              -1s
+            </button>
+            <input
+              type="range"
+              id="tempo-video"
+              min="0"
+              max="2400"
+              value="0"
+              style="margin: 0; flex: 1"
+            />
+            <button
+              id="btn-mais-tempo"
+              class="btn-acao btn-config"
+              style="
+                width: auto;
+                padding: 5px 15px;
+                margin: 0;
+                border-radius: 8px;
+              "
+            >
+              +1s
+            </button>
+          </div>
         </div>
 
         <section class="reservas duo-container">
@@ -156,8 +184,8 @@
           <div class="lista-reservas"></div>
           <button
             id="btn-modo-partida"
-            class="btn-acao"
-            style="width: 100%; margin-top: 15px"
+            class="btn-acao spacing-top"
+            style="width: 100%"
           >
             ⚙️ Alterar Partida
           </button>
@@ -170,8 +198,12 @@
       </aside>
     </div>
 
-    <div id="modal-acao" class="escondido duo-modal">
-      <h4 id="modal-titulo">Ação aos 00:00</h4>
+    <div
+      id="modal-acao"
+      class="escondido duo-modal modal-centralizado"
+      style="width: 200px"
+    >
+      <h4 id="modal-titulo" class="modal-titulo-central">Ação aos 00:00</h4>
       <div class="botoes-acao">
         <button class="btn-acao btn-duo-azul" data-tipo="Passe Certo">
           Passe Certo
@@ -192,50 +224,23 @@
 
     <div
       id="modal-edicao"
-      class="escondido duo-modal"
-      style="width: 300px; text-align: center"
+      class="escondido duo-modal modal-centralizado"
+      style="width: 300px"
     >
-      <h4>⚙️ Opções do Lance</h4>
-      <div style="margin: 15px 0; text-align: left">
-        <label style="font-size: 14px; color: #aaa">Alterar Ação:</label>
-        <select
-          id="editar-tipo-acao"
-          style="
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 8px;
-            background: #444;
-            color: white;
-            border: none;
-          "
-        >
+      <h4 class="modal-titulo-central">⚙️ Opções do Lance</h4>
+      <div class="form-grupo">
+        <label class="label-modal">Alterar Ação:</label>
+        <select id="editar-tipo-acao" class="select-modal">
           <option value="Passe Certo">Passe Certo</option>
           <option value="Passe Errado">Passe Errado</option>
           <option value="Interceptação">Interceptação</option>
           <option value="Finalização">Finalização</option>
           <option value="Gol">Gol</option>
         </select>
-        <label
-          style="font-size: 14px; color: #aaa; display: block; margin-top: 10px"
-          >Alterar Minuto (MM:SS):</label
-        >
-        <input
-          type="text"
-          id="editar-minuto"
-          style="
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 8px;
-            background: #444;
-            color: white;
-            border: none;
-            text-align: center;
-          "
-        />
+        <label class="label-modal">Alterar Minuto (MM:SS):</label>
+        <input type="text" id="editar-minuto" class="input-modal-padrao" />
       </div>
-      <div style="display: flex; gap: 10px; flex-direction: column">
+      <div class="modal-botoes-coluna">
         <button id="btn-salvar-edicao" class="btn-acao btn-duo-primary">
           Salvar Alterações
         </button>
@@ -246,17 +251,10 @@
       </div>
     </div>
 
-    <div
-      id="modal-substituicao"
-      class="escondido duo-modal"
-      style="width: 320px; text-align: center"
-    >
-      <h4>🔄 Substituição</h4>
-      <p
-        id="texto-substituicao"
-        style="margin: 15px 0; font-size: 15px; color: white"
-      ></p>
-      <div style="display: flex; gap: 10px; flex-direction: column">
+    <div id="modal-substituicao" class="escondido duo-modal modal-centralizado">
+      <h4 class="modal-titulo-central">🔄 Substituição</h4>
+      <p id="texto-substituicao" class="texto-alerta"></p>
+      <div class="modal-botoes-coluna">
         <button id="btn-confirmar-sub" class="btn-acao btn-duo-primary">
           Confirmar
         </button>
@@ -266,22 +264,10 @@
 
     <div
       id="modal-alerta-custom"
-      class="escondido duo-modal"
-      style="
-        width: 320px;
-        text-align: center;
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 200;
-      "
+      class="escondido duo-modal modal-centralizado"
     >
       <h4 id="titulo-alerta-custom" style="color: var(--duo-blue)">Aviso</h4>
-      <p
-        id="texto-alerta-custom"
-        style="margin: 15px 0; font-size: 15px; color: white"
-      ></p>
+      <p id="texto-alerta-custom" class="texto-alerta-branco"></p>
       <button
         id="btn-ok-alerta"
         class="btn-acao btn-duo-primary"
@@ -293,25 +279,13 @@
 
     <div
       id="modal-confirm-custom"
-      class="escondido duo-modal"
-      style="
-        width: 320px;
-        text-align: center;
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 200;
-      "
+      class="escondido duo-modal modal-centralizado"
     >
       <h4 id="titulo-confirm-custom" style="color: var(--duo-orange)">
         Atenção
       </h4>
-      <p
-        id="texto-confirm-custom"
-        style="margin: 15px 0; font-size: 15px; color: white"
-      ></p>
-      <div style="display: flex; gap: 10px; flex-direction: column">
+      <p id="texto-confirm-custom" class="texto-alerta-branco"></p>
+      <div class="modal-botoes-coluna">
         <button id="btn-sim-confirm" class="btn-acao btn-duo-orange">
           Sim, continuar
         </button>
@@ -319,71 +293,21 @@
       </div>
     </div>
 
-    <div
-      id="modal-settings"
-      class="escondido duo-modal"
-      style="
-        width: 320px;
-        text-align: center;
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 999;
-      "
-    >
-      <h4 style="color: var(--text-main)">⚙️ Definições</h4>
-      <div class="form-grupo" style="text-align: left">
-        <label
-          style="
-            color: #aaa;
-            font-size: 14px;
-            margin-bottom: 5px;
-            display: block;
-          "
-          >Aparência</label
-        >
-        <button
-          id="toggle-tema"
-          class="btn-acao"
-          style="
-            width: 100%;
-            background: var(--input-bg);
-            color: var(--text-main);
-            border: 2px solid transparent;
-          "
-        >
+    <div id="modal-settings" class="escondido duo-modal modal-centralizado">
+      <h4 class="modal-titulo-central">⚙️ Definições</h4>
+      <div class="form-grupo">
+        <label class="form-label">Aparência</label>
+        <button id="toggle-tema" class="btn-acao btn-config">
           🌙 Modo Escuro Ativo
         </button>
       </div>
-      <div class="form-grupo" style="margin-top: 20px; text-align: left">
-        <label
-          style="
-            color: #aaa;
-            font-size: 14px;
-            margin-bottom: 5px;
-            display: block;
-          "
-          >Acessibilidade</label
-        >
-        <button
-          id="toggle-daltonismo"
-          class="btn-acao"
-          style="
-            width: 100%;
-            background: var(--input-bg);
-            color: var(--text-main);
-            border: 2px solid transparent;
-          "
-        >
+      <div class="form-grupo spacing-top">
+        <label class="form-label">Acessibilidade</label>
+        <button id="toggle-daltonismo" class="btn-acao btn-config">
           👁️ Modo Daltônico: Desligado
         </button>
       </div>
-      <button
-        id="fechar-settings"
-        class="btn-cancelar"
-        style="margin-top: 20px"
-      >
+      <button id="fechar-settings" class="btn-cancelar spacing-top">
         Fechar
       </button>
     </div>
