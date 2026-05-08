@@ -43,7 +43,7 @@ const conexao = mysql.createConnection({
     password: process.env.DB_PASSWORD || 'alunolab', 
     database: process.env.DB_NAME || 'power_soccer',
     port: process.env.DB_PORT || 3306
-}); 
+});
 
 // 2. Testando a conexão na hora que o servidor ligar
 conexao.connect((erro) => {

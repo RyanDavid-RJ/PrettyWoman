@@ -112,7 +112,7 @@
       let atletaAbertoId = null;
 
       function carregarElenco() {
-        fetch("http://localhost:3000/api/atletas")
+        fetch("https://prettywoman.onrender.com/api/atletas")
           .then((res) => res.json())
           .then((atletas) => {
             const grid = document.getElementById("grid-elenco");
@@ -121,7 +121,7 @@
 
             atletas.forEach((a) => {
               const card = document.createElement("div"); card.classList.add("card-atleta");
-              let htmlFoto = a.foto ? `<div class="foto-grande" style="background-image: url('http://localhost:3000${a.foto}'); background-size: cover; background-position: center; color:transparent;"></div>` : `<div class="foto-grande">${a.nome.charAt(0)}</div>`;
+              let htmlFoto = a.foto ? `<div class="foto-grande" style="background-image: url('https://prettywoman.onrender.com${a.foto}'); background-size: cover; background-position: center; color:transparent;"></div>` : `<div class="foto-grande">${a.nome.charAt(0)}</div>`;
               card.innerHTML = `${htmlFoto} <h4 style="margin:0; color: var(--text-main);">${a.nome}</h4> <small class="form-label">Camisa ${a.numero_camisa}</small>`;
               card.onclick = () => abrirRaioX(a.id);
               grid.appendChild(card);
@@ -141,7 +141,7 @@
           const fotoInput = document.getElementById("foto-atleta");
           if (fotoInput.files.length > 0) formData.append("foto", fotoInput.files[0]);
 
-          fetch("http://localhost:3000/api/atletas", { method: "POST", body: formData })
+          fetch("https://prettywoman.onrender.com/api/atletas", { method: "POST", body: formData })
             .then((res) => res.json()).then((data) => {
               document.getElementById("form-jogador").reset();
               btnSalvar.textContent = "Salvar Atleta"; btnSalvar.disabled = false;
@@ -151,18 +151,18 @@
 
       function abrirRaioX(id) {
         atletaAbertoId = id; const escudo = document.getElementById("escudo-bloqueio"); const modal = document.getElementById("modal-perfil-jogador");
-        fetch(`http://localhost:3000/api/estatisticas/atleta/${id}`).then((res) => res.json()).then((stats) => {
+        fetch(`https://prettywoman.onrender.com/api/estatisticas/atleta/${id}`).then((res) => res.json()).then((stats) => {
             document.getElementById("perfil-nome").textContent = stats.nome || "Desconhecido";
             document.getElementById("perfil-camisa").textContent = `Camisa ${stats.numero_camisa || "?"}`;
             const divFoto = document.getElementById("perfil-foto");
-            if (stats.foto) { divFoto.style.backgroundImage = `url('http://localhost:3000${stats.foto}')`; divFoto.style.backgroundSize = "cover"; divFoto.style.backgroundPosition = "center"; divFoto.style.color = "transparent"; } else { divFoto.style.backgroundImage = "none"; divFoto.style.color = "white"; divFoto.textContent = stats.nome ? stats.nome.charAt(0) : "?"; }
+            if (stats.foto) { divFoto.style.backgroundImage = `url('https://prettywoman.onrender.com${stats.foto}')`; divFoto.style.backgroundSize = "cover"; divFoto.style.backgroundPosition = "center"; divFoto.style.color = "transparent"; } else { divFoto.style.backgroundImage = "none"; divFoto.style.color = "white"; divFoto.textContent = stats.nome ? stats.nome.charAt(0) : "?"; }
             document.getElementById("p-gols").textContent = stats.gols || 0;
             document.getElementById("p-passes-c").textContent = stats.passes_certos || 0;
             document.getElementById("p-passes-e").textContent = stats.passes_errados || 0;
             document.getElementById("p-intercep").textContent = stats.interceptacoes || 0;
           });
 
-        fetch(`http://localhost:3000/api/eventos/atleta/${id}`).then((res) => res.json()).then((lances) => {
+        fetch(`https://prettywoman.onrender.com/api/eventos/atleta/${id}`).then((res) => res.json()).then((lances) => {
             const campoHeatmap = document.getElementById("perfil-heatmap");
             campoHeatmap.querySelectorAll(".mancha-calor").forEach((m) => m.remove()); 
             lances.forEach((lance) => { const mancha = document.createElement("div"); mancha.classList.add("mancha-calor"); mancha.style.left = `${lance.coord_x}%`; mancha.style.top = `${lance.coord_y}%`; campoHeatmap.appendChild(mancha); });
@@ -184,7 +184,7 @@
       document.getElementById("btn-nao-confirm").addEventListener("click", () => { document.getElementById("modal-confirm-custom").classList.add("escondido"); document.getElementById("modal-perfil-jogador").style.opacity = "1"; });
       document.getElementById("btn-deletar-jogador").onclick = () => {
         mostrarConfirmCustom("Dispensar Jogador", "Certeza que deseja excluir este atleta? TODOS os lances dele sumirão das partidas. Ação irreversível.", "btn-duo-vermelho", "Sim, Dispensar",
-          () => { fetch(`http://localhost:3000/api/atletas/${atletaAbertoId}`, { method: "DELETE" }).then(() => { document.getElementById("modal-perfil-jogador").classList.add("escondido"); document.getElementById("modal-perfil-jogador").style.opacity = "1"; document.getElementById("escudo-bloqueio").classList.remove("ativo"); carregarElenco(); }); }
+          () => { fetch(`https://prettywoman.onrender.com/api/atletas/${atletaAbertoId}`, { method: "DELETE" }).then(() => { document.getElementById("modal-perfil-jogador").classList.add("escondido"); document.getElementById("modal-perfil-jogador").style.opacity = "1"; document.getElementById("escudo-bloqueio").classList.remove("ativo"); carregarElenco(); }); }
         );
       };
     </script>

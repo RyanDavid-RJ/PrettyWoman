@@ -84,7 +84,7 @@
 
     <script>
       let atletasBanco = []; let escalacao = { titulares: [null, null, null, null], reservas: [null, null, null, null] }; let slotSendoEditado = { tipo: null, index: null }; let atletaSelecionado = null;
-      fetch("http://localhost:3000/api/atletas").then((res) => res.json()).then((dados) => { atletasBanco = dados; });
+      fetch("https://prettywoman.onrender.com/api/atletas").then((res) => res.json()).then((dados) => { atletasBanco = dados; });
 
       function abrirGaveta(tipo, index) {
         slotSendoEditado = { tipo, index }; const lista = document.getElementById("lista-jogadores-gaveta"); lista.innerHTML = "";
@@ -94,7 +94,7 @@
         atletasBanco.forEach((atleta) => {
           const jaEscalado = escalacao.titulares.find((j) => j && j.id === atleta.id) || escalacao.reservas.find((j) => j && j.id === atleta.id); if (jaEscalado) return;
           const div = document.createElement("div"); div.classList.add("jogador-item");
-          let htmlFoto = atleta.foto ? `<div class="foto" style="background-image: url('http://localhost:3000${atleta.foto}'); background-size: cover; background-position: center; color:transparent;"></div>` : `<div class="foto" style="color: white; display:flex; align-items:center; justify-content:center;">${atleta.nome.charAt(0)}</div>`;
+          let htmlFoto = atleta.foto ? `<div class="foto" style="background-image: url('https://prettywoman.onrender.com${atleta.foto}'); background-size: cover; background-position: center; color:transparent;"></div>` : `<div class="foto" style="color: white; display:flex; align-items:center; justify-content:center;">${atleta.nome.charAt(0)}</div>`;
           div.innerHTML = `${htmlFoto} <span style="font-weight: bold; font-size: 16px;">${atleta.nome}</span>`; div.onclick = () => abrirModalCamisa(atleta); lista.appendChild(div);
         });
         document.getElementById("gaveta-overlay").style.display = "block"; setTimeout(() => document.getElementById("gaveta-jogadores").classList.add("aberta"), 10);
@@ -122,7 +122,7 @@
           const jogadorPronto = { ...atletaSelecionado, numero_camisa: numero }; escalacao[slotSendoEditado.tipo][slotSendoEditado.index] = jogadorPronto;
           const grid = document.getElementById(`grid-${slotSendoEditado.tipo}`); const slotVisual = grid.children[slotSendoEditado.index]; slotVisual.classList.add("preenchido");
           const divFoto = slotVisual.querySelector(".slot-foto"); divFoto.style.backgroundImage = "none"; divFoto.textContent = "";
-          if (jogadorPronto.foto) { divFoto.style.backgroundImage = `url('http://localhost:3000${jogadorPronto.foto}')`; divFoto.style.backgroundSize = "cover"; divFoto.style.backgroundPosition = "center"; } else { divFoto.textContent = jogadorPronto.nome.charAt(0); }
+          if (jogadorPronto.foto) { divFoto.style.backgroundImage = `url('https://prettywoman.onrender.com${jogadorPronto.foto}')`; divFoto.style.backgroundSize = "cover"; divFoto.style.backgroundPosition = "center"; } else { divFoto.textContent = jogadorPronto.nome.charAt(0); }
           slotVisual.querySelector(".slot-nome").textContent = `${jogadorPronto.nome} (${numero})`; document.getElementById("modal-camisa").classList.add("escondido"); document.getElementById("gaveta-overlay").style.display = "none";
         });
 
@@ -130,7 +130,7 @@
         const erroDiv = document.getElementById("mensagem-erro"); erroDiv.style.display = "none"; const dataJogo = document.getElementById("data-jogo").value; const adversario = document.getElementById("nome-adversario").value;
         if (!dataJogo || !adversario) { erroDiv.textContent = "Preencha a data e o nome do adversário para iniciar."; erroDiv.style.display = "block"; return; }
         if (escalacao.titulares.includes(null) || escalacao.reservas.includes(null)) { erroDiv.textContent = "Preencha todos os 8 jogadores (Titulares e Reservas) para iniciar."; erroDiv.style.display = "block"; return; }
-        fetch("http://localhost:3000/api/partidas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data_jogo: dataJogo, adversario: adversario, escalacao: escalacao }), })
+        fetch("https://prettywoman.onrender.com/api/partidas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data_jogo: dataJogo, adversario: adversario, escalacao: escalacao }), })
           .then((res) => res.json()).then((data) => {
             localStorage.setItem("partidaAtual", JSON.stringify({ id: data.id_partida, adversario: adversario, escalacao: escalacao }));
             localStorage.setItem("modoVisualizacao", "false"); window.location.href = "index.html";

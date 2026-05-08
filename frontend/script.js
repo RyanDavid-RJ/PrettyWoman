@@ -235,11 +235,11 @@ document.getElementById('btn-confirmar-sub').addEventListener('click', () => {
 
     const efetivarSubstituicao = () => {
         // Se houver ações no futuro, apaga elas em cascata primeiro
-        const promisesDelecao = acoesFuturas.map(l => fetch(`http://localhost:3000/api/eventos/${l.id}`, { method: 'DELETE' }));
+        const promisesDelecao = acoesFuturas.map(l => fetch(`https://prettywoman.onrender.com/api/eventos/${l.id}`, { method: 'DELETE' }));
         
         Promise.all(promisesDelecao).then(() => {
             const dadosParaBanco = { partida_id: partidaInfo.id, atleta_id: idSaindo, usuario_id: idDoTreinador, jogador_entrou_id: idEntrando, minuto_video: tempoAtualFormatado, tipo_acao: 'Substituição', coord_x: null, coord_y: null };
-            fetch('http://localhost:3000/api/eventos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosParaBanco) })
+            fetch('https://prettywoman.onrender.com/api/eventos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dadosParaBanco) })
             .then(() => {
                 dadosAlterados = true; 
                 atletaIdSelecionado = idEntrando; modalSubstituicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); carregarDadosDoBanco(); 
@@ -284,7 +284,7 @@ document.getElementById('fechar-modal').addEventListener('click', () => { modalA
 botoesAcao.forEach(botao => {
     botao.addEventListener('click', (e) => {
         const tAcao = e.target.getAttribute('data-tipo'); if(!tAcao) return; 
-        fetch('http://localhost:3000/api/eventos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ partida_id: partidaInfo.id, atleta_id: atletaIdSelecionado, usuario_id: idDoTreinador, minuto_video: tempoAtualFormatado, tipo_acao: tAcao, coord_x: cliqueX.toFixed(2), coord_y: cliqueY.toFixed(2) }) })
+        fetch('https://prettywoman.onrender.com/api/eventos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ partida_id: partidaInfo.id, atleta_id: atletaIdSelecionado, usuario_id: idDoTreinador, minuto_video: tempoAtualFormatado, tipo_acao: tAcao, coord_x: cliqueX.toFixed(2), coord_y: cliqueY.toFixed(2) }) })
         .then(() => {
             dadosAlterados = true; carregarDadosDoBanco(); modalAcao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); 
         });
@@ -320,7 +320,7 @@ function reorganizarTitularesEReservas(sAtual) {
         if (isTitular) {
             containerTitulares.appendChild(div);
             if (!fDiv) { fDiv = document.createElement('div'); fDiv.classList.add('foto'); const fReal = div.getAttribute('data-foto');
-                if (fReal && fReal !== 'null' && fReal !== '') { fDiv.style.backgroundImage = `url('http://localhost:3000${fReal}')`; fDiv.style.backgroundSize = 'cover'; fDiv.style.backgroundPosition = 'center'; fDiv.style.color = 'transparent'; } else { fDiv.textContent = div.querySelector('span').textContent.charAt(0); } div.prepend(fDiv); }
+                if (fReal && fReal !== 'null' && fReal !== '') { fDiv.style.backgroundImage = `url('https://prettywoman.onrender.com${fReal}')`; fDiv.style.backgroundSize = 'cover'; fDiv.style.backgroundPosition = 'center'; fDiv.style.color = 'transparent'; } else { fDiv.textContent = div.querySelector('span').textContent.charAt(0); } div.prepend(fDiv); }
         } else { containerReservas.appendChild(div); if (fDiv) fDiv.remove(); }
     });
 }
@@ -329,7 +329,7 @@ function reorganizarTitularesEReservas(sAtual) {
 // 8. RENDERIZAÇÃO
 // ==========================================
 function carregarDadosDoBanco() {
-    fetch(`http://localhost:3000/api/eventos/partida/${partidaInfo.id}`).then(res => res.json()).then(lances => { 
+    fetch(`https://prettywoman.onrender.com/api/eventos/partida/${partidaInfo.id}`).then(res => res.json()).then(lances => { 
         lancesDaPartida = lances; renderizarMapaELista();
         if (primeiraCarga && modoVisualizacao && lances.length > 0) {
             const uLance = [...lances].sort((a,b) => (((parseInt(a.minuto_video.split(':')[0])*60)+parseInt(a.minuto_video.split(':')[1])) - ((parseInt(b.minuto_video.split(':')[0])*60)+parseInt(b.minuto_video.split(':')[1]))))[lances.length - 1];
@@ -388,13 +388,13 @@ function abrirModalEdicao(e, id, acaoAtual, minutoAtual) {
 document.getElementById('btn-cancelar-edicao').addEventListener('click', () => { modalEdicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); });
 
 document.getElementById('btn-salvar-edicao').addEventListener('click', () => {
-    fetch(`http://localhost:3000/api/eventos/${idLanceEmEdicao}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo_acao: selectEditarAcao.value, minuto_video: inputEditarMinuto.value }) })
+    fetch(`https://prettywoman.onrender.com/api/eventos/${idLanceEmEdicao}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo_acao: selectEditarAcao.value, minuto_video: inputEditarMinuto.value }) })
     .then(() => { dadosAlterados = true; carregarDadosDoBanco(); modalEdicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); });
 });
 
 document.getElementById('btn-eliminar-definitivo').addEventListener('click', () => {
     mostrarConfirmCustom("Excluir Lance", "Deseja realmente apagar esta ação da partida?", "btn-duo-vermelho", "Sim, Excluir", () => {
-        fetch(`http://localhost:3000/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' }).then(() => { dadosAlterados = true; carregarDadosDoBanco(); modalEdicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); });
+        fetch(`https://prettywoman.onrender.com/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' }).then(() => { dadosAlterados = true; carregarDadosDoBanco(); modalEdicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); });
     });
 });
 
@@ -428,7 +428,7 @@ function deletarSubstituicao(e, lanceId, idQuemEntrou, minutoSubCancelada) {
     if (totalAcoesExtras > 0) aviso = `Atenção Crítica: Cancelar esta substituição causará um EFEITO DOMINÓ! O jogador que entrou (e seus possíveis substitutos futuros) realizaram ${totalAcoesExtras} ações. TODAS essas ações sumirão da linha do tempo. Prosseguir?`;
 
     mostrarConfirmCustom("Cancelar Substituição", aviso, "btn-duo-vermelho", "Sim, Apagar Tudo", () => {
-        Promise.all(idsParaDeletar.map(id => fetch(`http://localhost:3000/api/eventos/${id}`, { method: 'DELETE' })))
+        Promise.all(idsParaDeletar.map(id => fetch(`https://prettywoman.onrender.com/api/eventos/${id}`, { method: 'DELETE' })))
         .then(() => {
             dadosAlterados = true;
             setTimeout(() => carregarDadosDoBanco(), 500); 

@@ -2,7 +2,7 @@ const seletorPartida = document.getElementById('seletor-partida');
 let meuGrafico = null; 
 
 // 1. Carregar as partidas no Dropdown
-fetch('http://localhost:3000/api/partidas')
+fetch('https://prettywoman.onrender.com/api/partidas')
     .then(res => res.json())
     .then(partidas => {
         seletorPartida.innerHTML = '';
@@ -30,7 +30,7 @@ seletorPartida.addEventListener('change', (e) => {
 function carregarDadosDaPartida(partidaId) {
     if (!partidaId) return;
 
-    fetch(`http://localhost:3000/api/eventos/partida/${partidaId}`)
+    fetch(`https://prettywoman.onrender.com/api/eventos/partida/${partidaId}`)
         .then(res => res.json())
         .then(lances => {
             const kpis = atualizarKPIs(lances);

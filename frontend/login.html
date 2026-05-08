@@ -54,7 +54,7 @@
       }
       function loginDesenvolvedor() { enviarParaBackend("treinador@teste.com"); }
       function enviarParaBackend(emailUsuario, nomeUsuario) {
-        fetch("http://localhost:3000/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: emailUsuario, nome: nomeUsuario }) })
+        fetch("https://prettywoman.onrender.com/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: emailUsuario, nome: nomeUsuario }) })
           .then(res => res.json()).then(data => {
             if (data.sucesso) { localStorage.setItem("usuarioLogado", JSON.stringify(data.usuario)); window.location.href = "home.html"; }
           });
