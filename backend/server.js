@@ -35,24 +35,27 @@ const upload = multer({ storage: storage });
 // PERMISSÃO MÁGICA: Permite que o frontend acesse a pasta uploads livremente
 app.use('/uploads', express.static('uploads'));
 
-// 1. Criando a conexão com o banco de dados (Preparado para a Nuvem com SSL)
+// 1. Criando a conexão com o banco de dados (Preparado para a Nuvem com SSL e POOL)
 const conexao = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'alunolab', 
     database: process.env.DB_NAME || 'power_soccer',
     port: process.env.DB_PORT || 3306,
-    // A MÁGICA AQUI: Se estiver na nuvem, liga a criptografia (SSL). Se estiver no PC, deixa null.
-    ssl: process.env.DB_HOST ? { rejectUnauthorized: false } : null
+    ssl: process.env.DB_HOST ? { rejectUnauthorized: false } : null,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-// 2. Testando a conexão na hora que o servidor ligar
-conexao.connect((erro) => {
+// 2. Testando a conexão na hora que o servidor ligar (CORRIGIDO PARA POOL)
+conexao.getConnection((erro, connection) => {
     if (erro) {
         console.error('❌ Erro ao conectar no MySQL:', erro.message);
         return;
     }
     console.log('✅ Conexão com o banco power_soccer estabelecida com sucesso!');
+    connection.release(); // Libera a conexão de volta para o Pool
 });
 
 // 3. Rota de teste para ver se a API está viva
@@ -60,13 +63,10 @@ app.get('/', (req, res) => {
     res.json({ mensagem: 'A API do Scout Power Soccer está rodando!' });
 });
 
-// Rota para salvar a ação do jogo (Agora recebe a partida_id dinamicamente!)
-// Rota para salvar a ação do jogo (Agora recebe a partida_id E o usuario_id dinamicamente!)
+// Rota para salvar a ação do jogo
 app.post('/api/eventos', (req, res) => {
-    // Agora recebemos o usuario_id no pacote
     const { partida_id, atleta_id, usuario_id, minuto_video, tipo_acao, coord_x, coord_y, jogador_entrou_id } = req.body;
     
-    // Trocamos o "1" fixo pelo "?" dinâmico no usuario_id
     const sql = `INSERT INTO eventos_scout (partida_id, atleta_id, usuario_id, periodo, minuto_video, tipo_acao, coord_x, coord_y, jogador_entrou_id) 
                  VALUES (?, ?, ?, '1º Tempo', ?, ?, ?, ?, ?)`;
     
@@ -78,7 +78,6 @@ app.post('/api/eventos', (req, res) => {
         res.status(201).json({ mensagem: 'Ação salva!', id_registro: resultados.insertId });
     });
 });
-
 
 // Rota para buscar as Estatísticas Globais dos Jogadores
 app.get('/api/estatisticas', (req, res) => {
@@ -208,7 +207,6 @@ app.get('/api/estatisticas/atleta/:id', (req, res) => {
 // 2. Busca TODOS os eventos de UM jogador (Para o Mapa de Calor Pessoal)
 app.get('/api/eventos/atleta/:id', (req, res) => {
     const idAtleta = req.params.id;
-    // Pega só lances que têm coordenada no campo
     const sql = 'SELECT * FROM eventos_scout WHERE atleta_id = ? AND coord_x IS NOT NULL';
     conexao.query(sql, [idAtleta], (erro, resultados) => {
         if (erro) return res.status(500).json({ erro: 'Erro ao buscar lances do atleta' });
@@ -219,8 +217,6 @@ app.get('/api/eventos/atleta/:id', (req, res) => {
 // 3. Deletar um Jogador
 app.delete('/api/atletas/:id', (req, res) => {
     const idAtleta = req.params.id;
-    // CUIDADO: Se o jogador tem lances, apagar ele quebra o banco. 
-    // Primeiro apagamos os lances dele (Efeito Cascata), depois apagamos ele!
     conexao.query('DELETE FROM eventos_scout WHERE atleta_id = ? OR jogador_entrou_id = ?', [idAtleta, idAtleta], () => {
         conexao.query('DELETE FROM atletas WHERE id = ?', [idAtleta], (erro) => {
             if (erro) return res.status(500).json({ erro: 'Erro ao deletar atleta' });
@@ -228,8 +224,6 @@ app.delete('/api/atletas/:id', (req, res) => {
         });
     });
 });
-
-
 
 // ==========================================
 // ROTA DE LOGIN (Versão à Prova de Balas)
@@ -273,7 +267,6 @@ app.post('/api/login', (req, res) => {
 app.post('/api/partidas', (req, res) => {
     const { data_jogo, adversario, escalacao } = req.body;
     
-    // Agora salvamos a escalação como JSON no banco!
     const sql = 'INSERT INTO partidas (data_jogo, adversario, escalacao) VALUES (?, ?, ?)';
     
     conexao.query(sql, [data_jogo, adversario, JSON.stringify(escalacao)], (erro, resultados) => {
@@ -285,7 +278,7 @@ app.post('/api/partidas', (req, res) => {
     });
 });
 
-// ROTA PARA BUSCAR PARTIDAS ANTERIORES (NOVO!)
+// ROTA PARA BUSCAR PARTIDAS ANTERIORES
 app.get('/api/partidas', (req, res) => {
     const sql = 'SELECT * FROM partidas ORDER BY data_jogo DESC, id DESC';
     conexao.query(sql, (erro, resultados) => {
@@ -296,5 +289,5 @@ app.get('/api/partidas', (req, res) => {
 
 // 4. Ligando o servidor
 app.listen(porta, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${porta}`);
+    console.log(`🚀 Servidor rodando na porta: ${porta}`);
 });
