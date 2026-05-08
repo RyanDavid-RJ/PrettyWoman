@@ -36,7 +36,7 @@ const upload = multer({ storage: storage });
 app.use('/uploads', express.static('uploads'));
 
 // 1. Criando a conexão com o banco de dados (Preparado para a Nuvem com SSL)
-const conexao = mysql.createConnection({
+const conexao = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'alunolab', 
@@ -231,32 +231,43 @@ app.delete('/api/atletas/:id', (req, res) => {
 
 
 
-// ROTA DE LOGIN COM AUTO-REGISTO
+// ==========================================
+// ROTA DE LOGIN (Versão à Prova de Balas)
+// ==========================================
 app.post('/api/login', (req, res) => {
-    const { email, nome } = req.body; // Recebemos o nome vindo do Google
-    
-    const sqlBusca = 'SELECT id, nome, email FROM usuarios WHERE email = ?';
+    console.log("1. Recebi requisição de login:", req.body);
+    const { email, nome } = req.body;
 
-    conexao.query(sqlBusca, [email], (erro, resultados) => {
-        if (erro) return res.status(500).json({ erro: 'Erro no servidor' });
+    if (!email) {
+        console.error("Erro: Email não fornecido pelo Front-end!");
+        return res.status(400).json({ sucesso: false, erro: "Email não fornecido" });
+    }
 
-        if (resultados.length > 0) {
-            // Utilizador já existe
-            res.json({ sucesso: true, usuario: resultados[0] });
+    const sqlBusca = 'SELECT * FROM usuarios WHERE email = ?';
+    conexao.query(sqlBusca, [email], (err, results) => {
+        if (err) {
+            console.error("2. ERRO FATAL no BD ao buscar usuário:", err);
+            return res.status(500).json({ sucesso: false, erro: "Erro interno no BD" });
+        }
+
+        if (results.length > 0) {
+            console.log("3. Usuário encontrado no BD:", results[0].nome);
+            return res.json({ sucesso: true, usuario: results[0] });
         } else {
-            // Utilizador novo: Regista automaticamente
-            const sqlInsert = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, "google-auth")';
-            conexao.query(sqlInsert, [nome || 'Treinador', email], (erroIns, resIns) => {
-                if (erroIns) return res.status(500).json({ erro: 'Erro ao criar conta' });
-                
-                res.json({ 
-                    sucesso: true, 
-                    usuario: { id: resIns.insertId, nome: nome || 'Treinador', email: email } 
-                });
+            console.log("3. Usuário novo! Tentando cadastrar o email:", email);
+            const sqlInsert = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
+            
+            conexao.query(sqlInsert, [nome || 'Usuário Google', email, 'google-auth'], (err2, resultInsert) => {
+                if (err2) {
+                    console.error("4. ERRO FATAL ao inserir novo usuário:", err2);
+                    return res.status(500).json({ sucesso: false, erro: "Erro ao criar usuário" });
+                }
+                console.log("4. Sucesso! Novo usuário criado com ID:", resultInsert.insertId);
+                return res.json({ sucesso: true, usuario: { id: resultInsert.insertId, nome, email } });
             });
         }
     });
-});;
+});
 
 // ROTA PARA CRIAR NOVA PARTIDA
 app.post('/api/partidas', (req, res) => {
