@@ -35,14 +35,15 @@ const upload = multer({ storage: storage });
 // PERMISSÃO MÁGICA: Permite que o frontend acesse a pasta uploads livremente
 app.use('/uploads', express.static('uploads'));
 
-// 1. Criando a conexão com o banco de dados
-// 1. Criando a conexão com o banco de dados (Preparado para a Nuvem)
+// 1. Criando a conexão com o banco de dados (Preparado para a Nuvem com SSL)
 const conexao = mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'alunolab', 
     database: process.env.DB_NAME || 'power_soccer',
-    port: process.env.DB_PORT || 3306
+    port: process.env.DB_PORT || 3306,
+    // A MÁGICA AQUI: Se estiver na nuvem, liga a criptografia (SSL). Se estiver no PC, deixa null.
+    ssl: process.env.DB_HOST ? { rejectUnauthorized: false } : null
 });
 
 // 2. Testando a conexão na hora que o servidor ligar
