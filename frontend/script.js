@@ -393,9 +393,26 @@ document.getElementById('btn-salvar-edicao').addEventListener('click', () => {
 });
 
 document.getElementById('btn-eliminar-definitivo').addEventListener('click', () => {
-    mostrarConfirmCustom("Excluir Lance", "Deseja realmente apagar esta ação da partida?", "btn-duo-vermelho", "Sim, Excluir", () => {
-        fetch(`https://prettywoman.onrender.com/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' }).then(() => { dadosAlterados = true; carregarDadosDoBanco(); modalEdicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); });
-    });
+
+    // 🔥 FECHA O MODAL ATUAL PRIMEIRO
+    modalEdicao.classList.add('escondido');
+
+    mostrarConfirmCustom(
+        "Excluir Lance",
+        "Deseja realmente apagar esta ação da partida?",
+        "btn-duo-vermelho",
+        "Sim, Excluir",
+        () => {
+            fetch(`http://localhost:3000/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' })
+                .then(() => {
+                    dadosAlterados = true;
+                    carregarDadosDoBanco();
+
+                    // 🔥 GARANTE QUE O BLOQUEIO SOME SÓ NO FINAL
+                    escudoBloqueio.classList.remove('ativo');
+                });
+        }
+    );
 });
 
 // A INTELIGÊNCIA EM CASCATA (EFEITO DOMINÓ)
