@@ -350,11 +350,11 @@ function renderizarMapaELista() {
             // A BLINDAGEM DO CARTÃO VERDE (Sem botão de excluir)
             if (lance.atleta_id === atletaIdSelecionado) {
                 // Cartão Vermelho (Foi substituído) -> Tem a lixeira!
-                item.innerHTML = `<div class="info-historico" style="width:100%; text-align:center;"><strong>🔄 FOI SUBSTITUÍDO (Banco)</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>
+                item.innerHTML = `<div style="width:100%; text-align:center; color:black;"><strong>🔄 FOI SUBSTITUÍDO (Banco)</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>
                                   <button class="btn-excluir" style="color:white; opacity:1;" onclick="deletarSubstituicao(event, ${lance.id}, ${lance.jogador_entrou_id}, '${lance.minuto_video}')" title="Cancelar Substituição">🗑️</button>`;
             } else {
                 // Cartão Verde (Entrou) -> Sem lixeira, apenas visual!
-                item.innerHTML = `<div class="info-historico" style="width:100%; text-align:center;"><strong>🔄 ENTROU NA QUADRA</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>`;
+                item.innerHTML = `<div style="width:100%; text-align:center; color:black;"><strong>🔄 ENTROU NA QUADRA</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>`;
             }
 
             listaHistorico.appendChild(item); return; 

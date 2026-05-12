@@ -205,7 +205,7 @@ input[type="range"] {
   font-size: 14px;
 }
 .info-historico strong {
-  color: var(--duo-green-primary);
+  color: rgb(58, 221, 8);
 }
 .btn-excluir {
   background: none;
@@ -242,7 +242,7 @@ input[type="range"] {
 .btn-acao {
   padding: 12px;
   cursor: pointer;
-  color: white;
+  color: black;
   border: none;
   border-radius: 12px;
   font-weight: bold;

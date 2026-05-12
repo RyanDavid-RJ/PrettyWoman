@@ -170,7 +170,7 @@ document.getElementById('btn-exportar-pdf').addEventListener('click', () => {
     // Configurações do PDF
     const opcoes = {
         margin:       10, // Margem em mm
-        filename:     `Relatorio_PowerScout.pdf`,
+        filename:     `Relatorio_PowerSoccer.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#2D2D2D' }, // Alta resolução e fundo escuro
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }

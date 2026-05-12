@@ -60,7 +60,7 @@ conexao.getConnection((erro, connection) => {
 
 // 3. Rota de teste para ver se a API está viva
 app.get('/', (req, res) => {
-    res.json({ mensagem: 'A API do Scout Power Soccer está rodando!' });
+    res.json({ mensagem: 'A API do Soccer Power Soccer está rodando!' });
 });
 
 // Rota para salvar a ação do jogo
