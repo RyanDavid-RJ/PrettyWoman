@@ -118,41 +118,19 @@
         <div class="linha-tempo-container duo-card">
           <label
             for="tempo-video"
-            style="display: flex; align-items: center; gap: 10px"
+            class="label-tempo"
           >
             ⏱️ Tempo de Jogo:
             <span
               id="tempo-display"
-              style="
-                color: var(--text-main);
-                font-weight: 900;
-                font-size: 1.2em;
-                background: var(--bg-primary);
-                padding: 4px 12px;
-                border-radius: 8px;
-                border: 2px solid var(--border-ui);
-                letter-spacing: 1px;
-              "
+              class="badge-tempo"
               >00:00</span
             >
           </label>
-          <div
-            style="
-              display: flex;
-              gap: 10px;
-              align-items: center;
-              margin-top: 10px;
-            "
-          >
+          <div class="controles-tempo">
             <button
               id="btn-menos-tempo"
-              class="btn-acao btn-config"
-              style="
-                width: auto;
-                padding: 5px 15px;
-                margin: 0;
-                border-radius: 8px;
-              "
+              class="btn-acao btn-config btn-tempo-ajuste"
             >
               -1s
             </button>
@@ -162,17 +140,11 @@
               min="0"
               max="2400"
               value="0"
-              style="margin: 0; flex: 1"
+              class="input-range-tempo"
             />
             <button
               id="btn-mais-tempo"
-              class="btn-acao btn-config"
-              style="
-                width: auto;
-                padding: 5px 15px;
-                margin: 0;
-                border-radius: 8px;
-              "
+              class="btn-acao btn-config btn-tempo-ajuste"
             >
               +1s
             </button>
@@ -184,8 +156,7 @@
           <div class="lista-reservas"></div>
           <button
             id="btn-modo-partida"
-            class="btn-acao spacing-top"
-            style="width: 100%"
+            class="btn-acao spacing-top btn-block"
           >
             ⚙️ Alterar Partida
           </button>
@@ -200,8 +171,7 @@
 
     <div
       id="modal-acao"
-      class="escondido duo-modal modal-centralizado"
-      style="width: 200px"
+      class="escondido duo-modal modal-centralizado modal-sm"
     >
       <h4 id="modal-titulo" class="modal-titulo-central">Ação aos 00:00</h4>
       <div class="botoes-acao">
@@ -224,8 +194,7 @@
 
     <div
       id="modal-edicao"
-      class="escondido duo-modal modal-centralizado"
-      style="width: 300px"
+      class="escondido duo-modal modal-centralizado modal-md"
     >
       <h4 class="modal-titulo-central">⚙️ Opções do Lance</h4>
       <div class="form-grupo">
@@ -266,12 +235,11 @@
       id="modal-alerta-custom"
       class="escondido duo-modal modal-centralizado"
     >
-      <h4 id="titulo-alerta-custom" style="color: var(--duo-blue)">Aviso</h4>
-      <p id="texto-alerta-custom" class="texto-alerta-branco"></p>
+      <h4 id="titulo-alerta-custom" class="cor-duo-blue">Aviso</h4>
+      <p id="texto-alerta-custom" class="texto-alerta"></p>
       <button
         id="btn-ok-alerta"
-        class="btn-acao btn-duo-primary"
-        style="width: 100%"
+        class="btn-acao btn-duo-primary btn-block"
       >
         Entendido
       </button>
@@ -281,10 +249,10 @@
       id="modal-confirm-custom"
       class="escondido duo-modal modal-centralizado"
     >
-      <h4 id="titulo-confirm-custom" style="color: var(--duo-orange)">
+      <h4 id="titulo-confirm-custom" class="cor-duo-orange">
         Atenção
       </h4>
-      <p id="texto-confirm-custom" class="texto-alerta-branco"></p>
+      <p id="texto-confirm-custom" class="texto-alerta"></p>
       <div class="modal-botoes-coluna">
         <button id="btn-sim-confirm" class="btn-acao btn-duo-orange">
           Sim, continuar

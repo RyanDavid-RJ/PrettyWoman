@@ -46,31 +46,31 @@
             <label class="form-label">Foto do Perfil (Opcional)</label>
             <input type="file" id="foto-atleta" class="form-input" accept="image/png, image/jpeg" />
           </div>
-          <button type="submit" class="btn-acao btn-duo-primary" style="width: 100%;">Salvar Atleta</button>
+          <button type="submit" class="btn-acao btn-duo-primary btn-block">Salvar Atleta</button>
         </form>
       </div>
     </div>
 
-    <div id="modal-perfil-jogador" class="escondido duo-modal modal-perfil modal-centralizado" style="width: 90%; max-width: 800px;">
+    <div id="modal-perfil-jogador" class="escondido duo-modal modal-perfil modal-centralizado modal-lg">
       <div class="perfil-header">
-        <div id="perfil-foto" class="foto-grande" style="width: 100px; height: 100px; font-size: 40px"></div>
-        <div style="text-align: left;">
-          <h2 id="perfil-nome" style="margin-bottom: 5px">Nome</h2>
-          <span id="perfil-camisa" style="background: var(--duo-green-primary); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold;">Camisa 00</span>
+        <div id="perfil-foto" class="foto-grande perfil-foto-detalhe"></div>
+        <div class="perfil-info-text">
+          <h2 id="perfil-nome" class="perfil-nome">Nome</h2>
+          <span id="perfil-camisa" class="badge-camisa">Camisa 00</span>
         </div>
       </div>
 
       <h3>📊 Raio-X de Desempenho</h3>
       <div class="perfil-kpis">
-        <div class="kpi-mini"><h5>Gols</h5><div class="val" id="p-gols" style="color: var(--duo-yellow)">0</div></div>
-        <div class="kpi-mini"><h5>Passes Certos</h5><div class="val" id="p-passes-c" style="color: var(--duo-blue)">0</div></div>
-        <div class="kpi-mini"><h5>Passes Errados</h5><div class="val" id="p-passes-e" style="color: var(--duo-red)">0</div></div>
-        <div class="kpi-mini"><h5>Interceptações</h5><div class="val" id="p-intercep" style="color: var(--duo-orange)">0</div></div>
+        <div class="kpi-mini"><h5>Gols</h5><div class="val cor-duo-yellow" id="p-gols">0</div></div>
+        <div class="kpi-mini"><h5>Passes Certos</h5><div class="val cor-duo-blue" id="p-passes-c">0</div></div>
+        <div class="kpi-mini"><h5>Passes Errados</h5><div class="val cor-duo-red" id="p-passes-e">0</div></div>
+        <div class="kpi-mini"><h5>Interceptações</h5><div class="val cor-duo-orange" id="p-intercep">0</div></div>
       </div>
 
       <h3>🔥 Mapa de Calor Pessoal</h3>
       <div class="heatmap-container-mini" id="perfil-heatmap">
-        <svg viewBox="0 0 800 500" width="100%" height="100%" style="position: absolute; z-index: 1">
+        <svg viewBox="0 0 800 500" width="100%" height="100%" class="svg-heatmap-overlay">
           <rect x="20" y="20" width="760" height="460" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4" rx="15" />
           <line x1="400" y1="20" x2="400" y2="480" stroke="rgba(255,255,255,0.5)" stroke-width="4" />
           <circle cx="400" cy="250" r="70" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4" />
@@ -81,13 +81,13 @@
       </div>
 
       <div class="header-actions spacing-top">
-        <button id="btn-deletar-jogador" class="btn-acao btn-duo-vermelho" style="flex: 1">🗑️ Dispensar Jogador</button>
-        <button id="fechar-perfil" class="btn-cancelar" style="flex: 1; margin: 0">Fechar Perfil</button>
+        <button id="btn-deletar-jogador" class="btn-acao btn-duo-vermelho btn-flex">🗑️ Dispensar Jogador</button>
+        <button id="fechar-perfil" class="btn-cancelar btn-flex">Fechar Perfil</button>
       </div>
     </div>
 
     <div id="modal-confirm-custom" class="escondido duo-modal modal-centralizado">
-      <h4 id="titulo-confirm-custom" style="color: var(--duo-orange)">Atenção</h4>
+      <h4 id="titulo-confirm-custom" class="cor-duo-orange">Atenção</h4>
       <p id="texto-confirm-custom" class="texto-alerta"></p>
       <div class="modal-botoes-coluna">
         <button id="btn-sim-confirm" class="btn-acao btn-duo-orange">Sim</button>
@@ -121,8 +121,8 @@
 
             atletas.forEach((a) => {
               const card = document.createElement("div"); card.classList.add("card-atleta");
-              let htmlFoto = a.foto ? `<div class="foto-grande" style="background-image: url('https://prettywoman.onrender.com${a.foto}'); background-size: cover; background-position: center; color:transparent;"></div>` : `<div class="foto-grande">${a.nome.charAt(0)}</div>`;
-              card.innerHTML = `${htmlFoto} <h4 style="margin:0; color: var(--text-main);">${a.nome}</h4> <small class="form-label">Camisa ${a.numero_camisa}</small>`;
+              let htmlFoto = a.foto ? `<div class="foto-grande foto-bg-custom" style="background-image: url('https://prettywoman.onrender.com${a.foto}');"></div>` : `<div class="foto-grande">${a.nome.charAt(0)}</div>`;
+              card.innerHTML = `${htmlFoto} <h4 class="card-atleta-nome">${a.nome}</h4> <small class="form-label">Camisa ${a.numero_camisa}</small>`;
               card.onclick = () => abrirRaioX(a.id);
               grid.appendChild(card);
             });
@@ -155,7 +155,7 @@
             document.getElementById("perfil-nome").textContent = stats.nome || "Desconhecido";
             document.getElementById("perfil-camisa").textContent = `Camisa ${stats.numero_camisa || "?"}`;
             const divFoto = document.getElementById("perfil-foto");
-            if (stats.foto) { divFoto.style.backgroundImage = `url('https://prettywoman.onrender.com${stats.foto}')`; divFoto.style.backgroundSize = "cover"; divFoto.style.backgroundPosition = "center"; divFoto.style.color = "transparent"; } else { divFoto.style.backgroundImage = "none"; divFoto.style.color = "white"; divFoto.textContent = stats.nome ? stats.nome.charAt(0) : "?"; }
+            if (stats.foto) { divFoto.classList.add('foto-bg-custom'); divFoto.style.backgroundImage = `url('https://prettywoman.onrender.com${stats.foto}')`; } else { divFoto.classList.remove('foto-bg-custom'); divFoto.style.backgroundImage = "none"; divFoto.style.color = "white"; divFoto.textContent = stats.nome ? stats.nome.charAt(0) : "?"; }
             document.getElementById("p-gols").textContent = stats.gols || 0;
             document.getElementById("p-passes-c").textContent = stats.passes_certos || 0;
             document.getElementById("p-passes-e").textContent = stats.passes_errados || 0;

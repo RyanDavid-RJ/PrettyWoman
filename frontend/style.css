@@ -999,18 +999,14 @@ body.login-page {
 
 /* ==================================================================
    4. RESPONSIVIDADE (MOBILE FIRST & MEDIA QUERIES)
-   O sistema se adapta automaticamente a celulares e tablets
    ================================================================== */
 
 @media (max-width: 1024px) {
-  /* 1. Transforma o layout horizontal (3 colunas) numa lista vertical rolável */
   .layout-principal {
     flex-direction: column;
-    overflow-y: auto; /* Libera a rolagem na tela */
+    overflow-y: auto;
     padding: 10px;
   }
-
-  /* 2. Remove as larguras fixas para não vazar da tela do celular */
   .titulares,
   .historico,
   .linha-tempo-container,
@@ -1019,8 +1015,6 @@ body.login-page {
     max-width: 100%;
     box-sizing: border-box;
   }
-
-  /* 3. Coloca os jogadores titulares lado a lado (em grade) para poupar espaço */
   .titulares {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -1029,8 +1023,6 @@ body.login-page {
   .titulares .jogador {
     margin-bottom: 0;
   }
-
-  /* 4. O Header precisa de mais respiro para não espremer os botões */
   .duo-header {
     flex-direction: column;
     gap: 15px;
@@ -1041,24 +1033,18 @@ body.login-page {
     flex-wrap: wrap;
     justify-content: center;
   }
-
-  /* 5. Ajeita o menu de Configurações para telas pequenas */
   .config-container {
     padding: 15px;
   }
 }
 
 @media (max-width: 600px) {
-  /* 6. Ajustes extras para celulares de tela muito pequena */
   .titulares {
-    grid-template-columns: 1fr 1fr; /* 2 jogadores por linha */
+    grid-template-columns: 1fr 1fr;
   }
-
   .splash-logo {
-    font-size: 40px; /* Diminui a logo de abertura */
+    font-size: 40px;
   }
-
-  /* Diminui o texto dos KPIs no Dashboard para caber melhor */
   .kpi-card .valor {
     font-size: 28px;
   }
@@ -1066,3 +1052,57 @@ body.login-page {
     padding: 15px;
   }
 }
+
+/* ==================================================================
+   5. CLASSES DE REFATORAÇÃO (Substituindo inline styles)
+   ================================================================== */
+/* Utilitários de Layout */
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.btn-block { width: 100%; }
+.btn-block-large { width: 100%; font-size: 18px; }
+.btn-flex { flex: 1; margin: 0; }
+.btn-remover-gaveta { width: 100%; margin-bottom: 20px; }
+
+/* Cores de Texto Dinâmicas */
+.cor-duo-blue { color: var(--duo-blue); }
+.cor-duo-orange { color: var(--duo-orange); }
+.cor-duo-purple { color: var(--duo-purple); }
+.cor-duo-yellow { color: var(--duo-yellow); }
+.cor-duo-red { color: var(--duo-red); }
+.cor-branca { color: #ffffff; }
+
+/* Modais Estendidos */
+.modal-sm { width: 200px; }
+.modal-md { width: 300px; }
+.modal-camisa { width: 280px; }
+.modal-lg { width: 90%; max-width: 800px; }
+
+/* Nova Partida & Partidas */
+.titulo-secao-titulares { margin-top: 30px; color: var(--duo-blue); }
+.titulo-secao-reservas { margin-top: 20px; color: #aaa; }
+.titulo-gaveta { margin-bottom: 20px; text-align: center; }
+.partida-card-titulo { font-size: 18px; color: var(--text-main); }
+.partida-card-icone { font-size: 24px; color: var(--text-main); }
+
+/* Elenco e Perfil (jogadores.html) */
+.perfil-foto-detalhe { width: 100px; height: 100px; font-size: 40px; }
+.perfil-info-text { text-align: left; }
+.perfil-nome { margin-bottom: 5px; }
+.badge-camisa { background: var(--duo-green-primary); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; }
+.card-atleta-nome { margin: 0; color: var(--text-main); }
+.foto-bg-custom { background-size: cover; background-position: center; color: transparent; }
+
+/* Prancheta Tática (index.html) */
+.label-tempo { display: flex; align-items: center; gap: 10px; }
+.badge-tempo { color: var(--text-main); font-weight: 900; font-size: 1.2em; background: var(--bg-primary); padding: 4px 12px; border-radius: 8px; border: 2px solid var(--border-ui); letter-spacing: 1px; }
+.controles-tempo { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+.btn-tempo-ajuste { width: auto; padding: 5px 15px; margin: 0; border-radius: 8px; }
+.input-range-tempo { margin: 0; flex: 1; }
+.svg-heatmap-overlay { position: absolute; z-index: 1; }
+
+/* Histórico de Lances e Substituições (script.js) */
+.destaque-adversario { color: var(--duo-blue); }
+.item-historico-saida { background-color: var(--duo-red); color: white; }
+.item-historico-entrada { background-color: var(--duo-green-primary); color: white; }
+.info-historico-sub { width: 100%; text-align: center; color: black; }
+.btn-excluir-sub { color: white; opacity: 1; }

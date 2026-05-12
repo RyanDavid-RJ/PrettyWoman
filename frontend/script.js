@@ -16,7 +16,7 @@ let modoVisualizacao = localStorage.getItem('modoVisualizacao') === 'true';
 let dadosAlterados = false; // Rastreador de alterações não salvas
 
 const headerNome = document.getElementById('nome-treinador');
-if (headerNome && partidaInfo.adversario) headerNome.innerHTML = `<span style="color:var(--duo-blue);">vs ${partidaInfo.adversario}</span>`;
+if (headerNome && partidaInfo.adversario) headerNome.innerHTML = `<span class="destaque-adversario">vs ${partidaInfo.adversario}</span>`;
 
 let atletaIdSelecionado = 0; let jogadorSelecionado = "Desconhecido";
 if (partidaInfo.escalacao && partidaInfo.escalacao.titulares && partidaInfo.escalacao.titulares[0]) {
@@ -203,8 +203,7 @@ document.addEventListener('click', (e) => {
         if(modoVisualizacao) return mostrarAlertaCustom("Modo Leitura", "A tela está travada. Clique em 'Alterar Partida' para fazer substituições.");
         
         idSaindo = parseInt(titularAtivo.getAttribute('data-id')); idEntrando = parseInt(boxJogador.getAttribute('data-id'));
-        textoSubstituicao.innerHTML = `<strong>${titularAtivo.querySelector('span').textContent}</strong> será substituído por <strong>${boxJogador.querySelector('span').textContent}</strong> aos <span class="cor-duo">${tempoAtualFormatado}</span>?`;
-        modalSubstituicao.style.position = 'fixed'; modalSubstituicao.style.left = '50%'; modalSubstituicao.style.top = '50%'; modalSubstituicao.style.transform = 'translate(-50%, -50%)';
+        textoSubstituicao.innerHTML = `<strong>${titularAtivo.querySelector('span').textContent}</strong> será substituído por <strong>${boxJogador.querySelector('span').textContent}</strong> aos <span class="cor-duo-green-primary">${tempoAtualFormatado}</span>?`;
         escudoBloqueio.classList.add('ativo'); modalSubstituicao.classList.remove('escondido');
     } 
     else if (!isReserva) {
@@ -275,7 +274,6 @@ svgQuadra.addEventListener('click', (e) => {
     const lanceNoMesmoSegundo = lancesDaPartida.some(l => l.minuto_video === tempoAtualFormatado);
     if (lanceNoMesmoSegundo) return mostrarAlertaCustom("Segundo Ocupado!", "Já existe uma ação anotada neste segundo exato. Avance ou recue o tempo em 1s clicando nos botões [-1s] ou [+1s] para registrar o novo lance.");
     tituloModal.textContent = `${jogadorSelecionado} aos ${tempoAtualFormatado}`;
-    modalAcao.style.position = 'fixed'; modalAcao.style.left = '50%'; modalAcao.style.top = '50%'; modalAcao.style.transform = 'translate(-50%, -50%)';
     escudoBloqueio.classList.add('ativo'); modalAcao.classList.remove('escondido');
 });
 
@@ -320,7 +318,7 @@ function reorganizarTitularesEReservas(sAtual) {
         if (isTitular) {
             containerTitulares.appendChild(div);
             if (!fDiv) { fDiv = document.createElement('div'); fDiv.classList.add('foto'); const fReal = div.getAttribute('data-foto');
-                if (fReal && fReal !== 'null' && fReal !== '') { fDiv.style.backgroundImage = `url('https://prettywoman.onrender.com${fReal}')`; fDiv.style.backgroundSize = 'cover'; fDiv.style.backgroundPosition = 'center'; fDiv.style.color = 'transparent'; } else { fDiv.textContent = div.querySelector('span').textContent.charAt(0); } div.prepend(fDiv); }
+                if (fReal && fReal !== 'null' && fReal !== '') { fDiv.classList.add('foto-bg-custom'); fDiv.style.backgroundImage = `url('https://prettywoman.onrender.com${fReal}')`; } else { fDiv.textContent = div.querySelector('span').textContent.charAt(0); } div.prepend(fDiv); }
         } else { containerReservas.appendChild(div); if (fDiv) fDiv.remove(); }
     });
 }
@@ -345,16 +343,15 @@ function renderizarMapaELista() {
     lFilt.forEach(lance => {
         if(lance.tipo_acao === 'Substituição') {
             const item = document.createElement('div'); item.classList.add('item-historico');
-            item.style.backgroundColor = lance.atleta_id === atletaIdSelecionado ? 'var(--duo-red)' : 'var(--duo-green-primary)'; item.style.color = 'white';
             
-            // A BLINDAGEM DO CARTÃO VERDE (Sem botão de excluir)
+            // A BLINDAGEM DO CARTÃO VERDE E VERMELHO REFATORADA PARA CSS
             if (lance.atleta_id === atletaIdSelecionado) {
-                // Cartão Vermelho (Foi substituído) -> Tem a lixeira!
-                item.innerHTML = `<div style="width:100%; text-align:center; color:black;"><strong>🔄 FOI SUBSTITUÍDO (Banco)</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>
-                                  <button class="btn-excluir" style="color:white; opacity:1;" onclick="deletarSubstituicao(event, ${lance.id}, ${lance.jogador_entrou_id}, '${lance.minuto_video}')" title="Cancelar Substituição">🗑️</button>`;
+                item.classList.add('item-historico-saida');
+                item.innerHTML = `<div class="info-historico-sub"><strong>🔄 FOI SUBSTITUÍDO (Banco)</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>
+                                  <button class="btn-excluir btn-excluir-sub" onclick="deletarSubstituicao(event, ${lance.id}, ${lance.jogador_entrou_id}, '${lance.minuto_video}')" title="Cancelar Substituição">🗑️</button>`;
             } else {
-                // Cartão Verde (Entrou) -> Sem lixeira, apenas visual!
-                item.innerHTML = `<div style="width:100%; text-align:center; color:black;"><strong>🔄 ENTROU NA QUADRA</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>`;
+                item.classList.add('item-historico-entrada');
+                item.innerHTML = `<div class="info-historico-sub"><strong>🔄 ENTROU NA QUADRA</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>`;
             }
 
             listaHistorico.appendChild(item); return; 
@@ -382,7 +379,7 @@ function renderizarMapaELista() {
 function abrirModalEdicao(e, id, acaoAtual, minutoAtual) { 
     e.stopPropagation(); 
     if(modoVisualizacao) return mostrarAlertaCustom("Modo Leitura", "Clique em 'Alterar Partida' para editar lances."); 
-    idLanceEmEdicao = id; selectEditarAcao.value = acaoAtual; inputEditarMinuto.value = minutoAtual; modalEdicao.style.position = 'fixed'; modalEdicao.style.left = `50%`; modalEdicao.style.top = `50%`; modalEdicao.style.transform = `translate(-50%, -50%)`; escudoBloqueio.classList.add('ativo'); modalEdicao.classList.remove('escondido'); 
+    idLanceEmEdicao = id; selectEditarAcao.value = acaoAtual; inputEditarMinuto.value = minutoAtual; escudoBloqueio.classList.add('ativo'); modalEdicao.classList.remove('escondido'); 
 }
 
 document.getElementById('btn-cancelar-edicao').addEventListener('click', () => { modalEdicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); });
@@ -403,7 +400,7 @@ document.getElementById('btn-eliminar-definitivo').addEventListener('click', () 
         "btn-duo-vermelho",
         "Sim, Excluir",
         () => {
-            fetch(`http://localhost:3000/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' })
+            fetch(`https://prettywoman.onrender.com/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' })
                 .then(() => {
                     dadosAlterados = true;
                     carregarDadosDoBanco();

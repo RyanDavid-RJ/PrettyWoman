@@ -21,7 +21,7 @@
       <h1><span class="cor-duo">Power</span>Soccer</h1>
       <p>Acesse o painel tático da equipe</p>
 
-      <div style="display: flex; justify-content: center">
+      <div class="flex-center">
         <div id="g_id_onload" data-client_id="435937929513-qdgtkv50f7hr96l3si189tmrd6p5okr5.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
         <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_black" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
       </div>
@@ -54,15 +54,12 @@
       }
       function loginDesenvolvedor() { enviarParaBackend("treinador@teste.com"); }
       function enviarParaBackend(emailUsuario, nomeUsuario) {
-        // 1. Pega os elementos da tela para dar feedback ao treinador
         const btnDev = document.querySelector('.btn-dev');
         const msgErro = document.getElementById('mensagem-erro');
         
-        // 2. Muda o texto para avisar que pode demorar a primeira vez
         btnDev.textContent = "Conectando ao servidor (Pode levar até 50s)...";
         msgErro.style.display = "none";
 
-        // IMPORTANTE: Confirme se o link aqui é o do seu Render mesmo!
         fetch("https://prettywoman.onrender.com/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -79,7 +76,6 @@
             }
           })
           .catch((erro) => {
-            // Se der erro ou demorar muito, avisa o usuário
             btnDev.textContent = "Login Rápido (Modo Dev)";
             msgErro.textContent = "Servidor acordando! Por favor, clique novamente.";
             msgErro.style.display = "block";
