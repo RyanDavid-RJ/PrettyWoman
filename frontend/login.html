@@ -11,15 +11,103 @@
   </head>
   <body class="login-page">
     <div id="splash-screen" class="splash-screen">
-      <div class="splash-logo"><span class="cor-duo">Power</span>Soccer</div>
+      <div class="splash-logo">
+        <svg width="200" height="50" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cadeira de Rodas -->
+          <g transform="translate(10, 15)">
+            <!-- Rodas -->
+            <circle cx="8" cy="35" r="5" fill="var(--duo-green-primary)"/>
+            <circle cx="18" cy="35" r="5" fill="var(--duo-green-primary)"/>
+            <!-- Estrutura da cadeira -->
+            <rect x="6" y="25" width="14" height="8" rx="2" fill="var(--duo-grena)"/>
+            <rect x="9" y="18" width="8" height="7" rx="1" fill="var(--duo-grena)"/>
+            <!-- Jogador simplificado -->
+            <circle cx="12" cy="12" r="4" fill="#F4C2A1"/>
+          </g>
+          
+          <!-- Bola -->
+          <g transform="translate(45, 35)">
+            <circle cx="0" cy="0" r="4" fill="white" stroke="black" stroke-width="0.5"/>
+            <path d="M-4,0 L0,-4 L4,0 L0,4 Z" fill="black" opacity="0.3"/>
+          </g>
+          
+          <!-- Gráficos de Barras -->
+          <g transform="translate(65, 25)">
+            <rect x="0" y="15" width="4" height="10" fill="var(--duo-green-primary)"/>
+            <rect x="6" y="10" width="4" height="15" fill="var(--duo-green-primary)"/>
+            <rect x="12" y="5" width="4" height="20" fill="var(--duo-green-primary)"/>
+            <rect x="18" y="12" width="4" height="13" fill="var(--duo-green-primary)"/>
+          </g>
+          
+          <!-- Seta de Crescimento -->
+          <g transform="translate(95, 30)">
+            <path d="M0,15 L5,5 L10,15" stroke="var(--duo-green-primary) stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5,5 L5,15" stroke="var(--duo-green-primary) stroke-width="2" stroke-linecap="round"/>
+          </g>
+          
+          <!-- Texto Power Soccer -->
+          <text x="120" y="35" font-family="var(--font-titles)" font-size="18" font-weight="bold" fill="var(--text-main)">
+            <tspan fill="var(--duo-green-primary)">Power</tspan><tspan fill="var(--text-main)"> Soccer</tspan>
+          </text>
+          
+          <!-- Texto Analytics -->
+          <text x="120" y="52" font-family="var(--font-primary)" font-size="10" font-weight="600" fill="#888">
+            DASHBOARD DE PERFORMANCE ESPORTIVA
+          </text>
+        </svg>
+      </div>
       <div id="espaco-bonequinho" class="splash-loader"></div>
     </div>
 
     <button id="btn-settings" class="btn-flutuante">⚙️</button>
 
-    <div class="login-box duo-card">
-      <h1><span class="cor-duo">Power</span>Soccer</h1>
-      <p>Acesse o painel tático da equipe</p>
+      <div class="login-box duo-card">
+        <div class="logo-container">
+          <svg width="280" height="80" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Cadeira de Rodas -->
+            <g transform="translate(10, 15)">
+              <!-- Rodas -->
+              <circle cx="8" cy="35" r="5" fill="var(--duo-green-primary)"/>
+              <circle cx="18" cy="35" r="5" fill="var(--duo-green-primary)"/>
+              <!-- Estrutura da cadeira -->
+              <rect x="6" y="25" width="14" height="8" rx="2" fill="var(--duo-grena)"/>
+              <rect x="9" y="18" width="8" height="7" rx="1" fill="var(--duo-grena)"/>
+              <!-- Jogador simplificado -->
+              <circle cx="12" cy="12" r="4" fill="#F4C2A1"/>
+            </g>
+            
+            <!-- Bola -->
+            <g transform="translate(45, 35)">
+              <circle cx="0" cy="0" r="4" fill="white" stroke="black" stroke-width="0.5"/>
+              <path d="M-4,0 L0,-4 L4,0 L0,4 Z" fill="black" opacity="0.3"/>
+            </g>
+            
+            <!-- Gráficos de Barras -->
+            <g transform="translate(65, 25)">
+              <rect x="0" y="15" width="4" height="10" fill="var(--duo-green-primary)"/>
+              <rect x="6" y="10" width="4" height="15" fill="var(--duo-green-primary)"/>
+              <rect x="12" y="5" width="4" height="20" fill="var(--duo-green-primary)"/>
+              <rect x="18" y="12" width="4" height="13" fill="var(--duo-green-primary)"/>
+            </g>
+            
+            <!-- Seta de Crescimento -->
+            <g transform="translate(95, 30)">
+              <path d="M0,15 L5,5 L10,15" stroke="var(--duo-green-primary) stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5,5 L5,15" stroke="var(--duo-green-primary) stroke-width="2" stroke-linecap="round"/>
+            </g>
+            
+            <!-- Texto Power Soccer -->
+            <text x="120" y="35" font-family="var(--font-titles)" font-size="18" font-weight="bold" fill="var(--text-main)">
+              <tspan fill="var(--duo-green-primary)">Power</tspan><tspan fill="var(--text-main)"> Soccer</tspan>
+            </text>
+            
+            <!-- Texto Analytics -->
+            <text x="120" y="52" font-family="var(--font-primary)" font-size="10" font-weight="600" fill="#888">
+              DASHBOARD DE PERFORMANCE ESPORTIVA
+            </text>
+          </svg>
+        </div>
+        <p>Acesse o painel tático da equipe</p>
 
       <div class="flex-center">
         <div id="g_id_onload" data-client_id="435937929513-qdgtkv50f7hr96l3si189tmrd6p5okr5.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>

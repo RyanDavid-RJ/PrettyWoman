@@ -5,8 +5,8 @@
 
 :root {
   /* --- FONTES --- */
-  --font-primary: "Varela Round", "Nunito", sans-serif;
-  --font-titles: "Fredoka", "Varela Round", sans-serif;
+  --font-primary: "Nunito", sans-serif;
+  --font-titles: "Fredoka", "Nunito", sans-serif;
 
   /* --- BORDAS E SOMBRAS --- */
   --radius-duo: 16px;
@@ -26,6 +26,7 @@
   --duo-orange: #ff9600;
   --duo-purple: #9c27b0;
   --duo-yellow: #ffc800;
+  --duo-grena: #8B0000;
 }
 
 /* --- MODO CLARO --- */
@@ -92,6 +93,12 @@ span {
   font-size: 24px;
   font-weight: bold;
   font-family: var(--font-titles);
+}
+
+.logo-oficial-header {
+  max-height: 45px;
+  width: auto;
+  object-fit: contain;
 }
 .layout-principal {
   display: flex;
@@ -396,12 +403,14 @@ input[type="range"]:active::-webkit-slider-thumb {
   animation: pulsarLogo 1.2s infinite alternate;
 }
 .splash-loader {
-  width: 50px;
-  height: 50px;
-  border: 5px solid var(--border-ui);
-  border-top: 5px solid var(--duo-green-primary);
-  border-radius: 50%;
-  animation: girarLoader 1s linear infinite;
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-radius: 0;
+  animation: none;
+}
+.bonequinho-animado {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 @keyframes pulsarLogo {
   0% {
@@ -419,39 +428,137 @@ input[type="range"]:active::-webkit-slider-thumb {
     transform: rotate(360deg);
   }
 }
+
+/* Animações para Splash Screen - Vibração/Tremor + Zoom-In */
+@keyframes vibrarZoom {
+  0% {
+    transform: scale(0.8) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    transform: scale(1.05) translateX(-2px);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.1) translateX(2px);
+  }
+  30% {
+    transform: scale(1.05) translateX(-1px);
+  }
+  40% {
+    transform: scale(1.08) translateX(1px);
+  }
+  50% {
+    transform: scale(1.05) translateX(-0.5px);
+  }
+  60% {
+    transform: scale(1.06) translateX(0.5px);
+  }
+  70% {
+    transform: scale(1.05) translateX(-0.3px);
+  }
+  80% {
+    transform: scale(1.05) translateX(0.3px);
+  }
+  90% {
+    transform: scale(1.05) translateX(-0.1px);
+  }
+  100% {
+    transform: scale(1.05) translateX(0);
+  }
+}
+
+.splash-imagem-animada {
+  animation: vibrarZoom 2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
 .esconder-splash {
   opacity: 0;
   visibility: hidden;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s;
+}
+
+.esconder-splash .splash-imagem-animada {
+  animation: none !important;
+  opacity: 0;
 }
 
 /* Páginas Específicas */
 .home-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  max-width: 900px;
-  margin: 50px auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  max-width: 1400px;
+  margin: 40px auto;
   padding: 20px;
+  min-height: 500px;
 }
 .card-home {
   text-align: center;
-  padding: 40px;
+  padding: 35px 25px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent;
+  border-radius: 24px;
+  background: var(--bg-secondary);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.card-home::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--duo-green-primary), var(--duo-blue));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 .card-home:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) scale(1.02);
   border-color: var(--duo-green-primary);
+  box-shadow: 
+    0 8px 30px rgba(88, 204, 2, 0.3),
+    0 0 20px rgba(88, 204, 2, 0.2),
+    0 0 40px rgba(88, 204, 2, 0.1);
 }
-.card-home i {
-  font-size: 50px;
-  display: block;
-  margin-bottom: 15px;
+.card-home:hover::before {
+  transform: scaleX(1);
+}
+.card-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  height: 70px;
+}
+.card-icon svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: all 0.3s ease;
+}
+.card-home:hover .card-icon svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(88, 204, 2, 0.4));
+}
+.card-home h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-main);
+  font-family: var(--font-titles);
 }
 .card-home p {
   color: #aaa;
   font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .dashboard-container {
@@ -785,13 +892,23 @@ body.login-page {
   align-items: center;
   height: 100vh;
 }
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.logo-container svg {
+  max-width: 100%;
+  height: auto;
+}
 .login-box {
   padding: 40px;
   border-radius: var(--radius-duo);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
   text-align: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   border: 2px solid var(--border-ui);
 }
 .login-box h1 {
@@ -1038,6 +1155,13 @@ body.login-page {
   }
 }
 
+@media (max-width: 1200px) {
+  .home-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
+  }
+}
+
 @media (max-width: 600px) {
   .titulares {
     grid-template-columns: 1fr 1fr;
@@ -1050,6 +1174,24 @@ body.login-page {
   }
   .kpi-card {
     padding: 15px;
+  }
+  .home-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin: 30px auto;
+    padding: 15px;
+    max-width: 400px;
+  }
+  .card-home {
+    padding: 25px 20px;
+    min-height: 280px;
+  }
+  .card-home h2 {
+    font-size: 20px;
+  }
+  .card-icon svg {
+    width: 50px;
+    height: 50px;
   }
 }
 

@@ -16,7 +16,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. LÓGICA DA SPLASH SCREEN (TELA DE ABERTURA)
     const splash = document.getElementById('splash-screen');
-    if (splash) {
+    const espacoBonequinho = document.getElementById('espaco-bonequinho');
+    
+    // Sorteio e injeção da imagem aleatória de splash screen
+    if (splash && espacoBonequinho) {
+        const imagensSplash = [
+            '../misc/imgs/2_SplashScreen1.jpg',
+            '../misc/imgs/3_SplashScreen2.jpg'
+        ];
+        
+        const imagemSorteada = imagensSplash[Math.floor(Math.random() * imagensSplash.length)];
+        
+        // Criar elemento de imagem dinamicamente
+        const imgElement = document.createElement('img');
+        imgElement.src = imagemSorteada;
+        imgElement.alt = 'Power Soccer Splash';
+        imgElement.className = 'splash-imagem-animada';
+        imgElement.style.maxWidth = '300px';
+        imgElement.style.maxHeight = '300px';
+        imgElement.style.objectFit = 'contain';
+        
+        // Limpar conteúdo atual e adicionar nova imagem
+        espacoBonequinho.innerHTML = '';
+        espacoBonequinho.appendChild(imgElement);
+        
         // Aguarda 0.8 segundos (800ms) para dar o charme
         setTimeout(() => {
             splash.classList.add('esconder-splash');
