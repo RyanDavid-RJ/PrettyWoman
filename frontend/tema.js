@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sorteio e injeção da imagem aleatória de splash screen
     if (splash && espacoBonequinho) {
         const imagensSplash = [
-            '../misc/imgs/2_SplashScreen1.jpg',
-            '../misc/imgs/3_SplashScreen2.jpg'
+            '../misc/imgs/2_SplashScreen1.png',
+            '../misc/imgs/3_SplashScreen2.png'
         ];
         
         const imagemSorteada = imagensSplash[Math.floor(Math.random() * imagensSplash.length)];

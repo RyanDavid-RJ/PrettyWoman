@@ -41,7 +41,7 @@ const conexao = mysql.createPool({
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'alunolab', 
     database: process.env.DB_NAME || 'power_soccer',
-    port: process.env.DB_PORT || 3303,
+    port: process.env.DB_PORT || 3306,
     ssl: process.env.DB_HOST ? { rejectUnauthorized: false } : null,
     waitForConnections: true,
     connectionLimit: 10,
