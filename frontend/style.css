@@ -96,7 +96,7 @@ span {
 }
 
 .logo-oficial-header {
-  max-height: 45px;
+  max-height: 100px;
   width: auto;
   object-fit: contain;
 }
@@ -403,7 +403,7 @@ input[type="range"]:active::-webkit-slider-thumb {
   animation: pulsarLogo 1.2s infinite alternate;
 }
 .splash-loader {
-  width: 80px;
+  width: 80=0px;
   height: 80px;
   border: none;
   border-radius: 0;
