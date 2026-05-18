@@ -16,34 +16,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. LÓGICA DA SPLASH SCREEN (TELA DE ABERTURA)
     const splash = document.getElementById('splash-screen');
-    const espacoBonequinho = document.getElementById('espaco-bonequinho');
     
-    // Sorteio e injeção da imagem aleatória de splash screen
-    if (splash && espacoBonequinho) {
-        const imagensSplash = [
-            './assets/img/2_SplashScreen1.jpg',
-            './assets/img/3_SplashScreen2.jpg',
-            './assets/img/4_SplashScreen3.jpg',
-            './assets/img/5_SplashScreen4.jpg',
-            './assets/img/6_SplashScreen5.png',
-            './assets/img/7_SplashScreen6.jpg',
-            './assets/img/8_SplashScreen7.jpg'
-        ];
-        
-        const imagemSorteada = imagensSplash[Math.floor(Math.random() * imagensSplash.length)];
-        
-        // Criar elemento de imagem dinamicamente
-        const imgElement = document.createElement('img');
-        imgElement.src = imagemSorteada;
-        imgElement.alt = 'Power Soccer Splash';
-        imgElement.className = 'splash-imagem-animada';
-        imgElement.style.maxWidth = '300px';
-        imgElement.style.maxHeight = '300px';
-        imgElement.style.objectFit = 'contain';
-        
-        // Limpar conteúdo atual e adicionar nova imagem
-        espacoBonequinho.innerHTML = '';
-        espacoBonequinho.appendChild(imgElement);
+    // Injetar HTML fixo da splash screen com animações
+    if (splash) {
+        splash.innerHTML = `
+            <div class="splash-content-wrapper">
+                <div class="splash-topo">
+                    <img src="./assets/img/logo.png" alt="Logo Cadeira" class="splash-logo-cadeira">
+                    <img src="./assets/img/texto-ps.png" alt="Power Soccer" class="splash-logo-texto">
+                </div>
+                <div class="splash-animacao-container">
+                    <div class="splash-personagem">
+                        <img src="./assets/img/jozy-transparente.png" alt="Jozy" class="jozy-animada">
+                        <div class="splash-fumaca"></div>
+                    </div>
+                    <img src="./assets/img/bola-transparente.png" alt="Bola" class="bola-animada">
+                </div>
+            </div>
+        `;
         
         // Aguarda 0.8 segundos (800ms) para dar o charme
         setTimeout(() => {
