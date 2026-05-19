@@ -6,11 +6,12 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>" />
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="tema.js"></script>
   </head>
   <body>
     <script>
-      if (!JSON.parse(localStorage.getItem("usuarioLogado"))) window.location.href = "login.html";
+      if (!localStorage.getItem("usuarioLogado")) window.location.href = "login.html";
     </script>
 
     <header class="duo-header">
@@ -63,30 +64,45 @@
         </div>
       </div>
 
-      <h3>📊 Raio-X de Desempenho</h3>
+      <h3>📊 Raio-X de Média por Jogo</h3>
       <div class="perfil-kpis">
-        <div class="kpi-mini"><h5>Gols</h5><div class="val" id="p-gols" style="color: var(--duo-yellow)">0</div></div>
-        <div class="kpi-mini"><h5>Passes Certos</h5><div class="val" id="p-passes-c" style="color: var(--duo-blue)">0</div></div>
-        <div class="kpi-mini"><h5>Passes Errados</h5><div class="val" id="p-passes-e" style="color: var(--duo-red)">0</div></div>
-        <div class="kpi-mini"><h5>Interceptações</h5><div class="val" id="p-intercep" style="color: var(--duo-orange)">0</div></div>
+        <div class="kpi-mini"><h5>Média Gols</h5><div class="val" id="p-gols" style="color: var(--duo-yellow)">0.0</div></div>
+        <div class="kpi-mini"><h5>Média Passes C.</h5><div class="val" id="p-passes-c" style="color: var(--duo-blue)">0.0</div></div>
+        <div class="kpi-mini"><h5>Média Passes E.</h5><div class="val" id="p-passes-e" style="color: var(--duo-red)">0.0</div></div>
+        <div class="kpi-mini"><h5>Média Intercep.</h5><div class="val" id="p-intercep" style="color: var(--duo-orange)">0.0</div></div>
       </div>
 
-      <h3>🔥 Mapa de Calor Pessoal</h3>
-      <div class="heatmap-container-mini" id="perfil-heatmap">
-        <svg viewBox="0 0 800 500" width="100%" height="100%" style="position: absolute; z-index: 1">
-          <rect x="20" y="20" width="760" height="460" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4" rx="15" />
-          <line x1="400" y1="20" x2="400" y2="480" stroke="rgba(255,255,255,0.5)" stroke-width="4" />
-          <circle cx="400" cy="250" r="70" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4" />
-          <circle cx="400" cy="250" r="6" fill="rgba(255,255,255,0.5)" />
-          <rect x="20" y="125" width="120" height="250" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4" rx="10" />
-          <rect x="660" y="125" width="120" height="250" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="4" rx="10" />
-        </svg>
+      <h3>📈 Gráfico de Evolução Temporal</h3>
+      <div class="duo-card" style="background: var(--bg-primary); padding: 15px; margin-top: 15px;">
+         <canvas id="graficoEvolucao" style="width: 100%; height: 250px;"></canvas>
       </div>
 
       <div class="header-actions spacing-top">
-        <button id="btn-deletar-jogador" class="btn-acao btn-duo-vermelho" style="flex: 1">🗑️ Dispensar Jogador</button>
+        <button id="btn-editar-atleta" class="btn-acao btn-duo-azul" style="flex: 1">✏️ Editar Jogador</button>
         <button id="fechar-perfil" class="btn-cancelar" style="flex: 1; margin: 0">Fechar Perfil</button>
       </div>
+    </div>
+
+    <div id="modal-editar-jogador" class="escondido duo-modal modal-centralizado" style="width: 340px; z-index: 1001;">
+      <h4 class="modal-titulo-central">✏️ Editar Dados do Atleta</h4>
+      <form id="form-editar-jogador" class="spacing-top">
+        <div class="form-grupo">
+          <label class="form-label">Nome do Atleta</label>
+          <input type="text" id="edit-nome-atleta" class="form-input" required />
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Número da Camisa</label>
+          <input type="number" id="edit-numero-atleta" class="form-input" required />
+        </div>
+        <div class="form-grupo">
+          <label class="form-label">Substituir Foto (Opcional)</label>
+          <input type="file" id="edit-foto-atleta" class="form-input" accept="image/png, image/jpeg" />
+        </div>
+        <div class="modal-botoes-coluna" style="margin-top: 20px;">
+          <button type="submit" class="btn-acao btn-duo-primary">Salvar Modificações</button>
+          <button type="button" id="btn-cancelar-edicao-atleta" class="btn-cancelar">Cancelar</button>
+        </div>
+      </form>
     </div>
 
     <div id="modal-confirm-custom" class="escondido duo-modal modal-centralizado">
@@ -113,6 +129,8 @@
 
     <script>
       let atletaAbertoId = null;
+      let dadosAtletaAtualGlobal = {};
+      let instanciarGraficoLinhas = null;
 
       function carregarElenco() {
         fetch("https://prettywoman.onrender.com/api/atletas")
@@ -135,7 +153,7 @@
 
       document.getElementById("form-jogador").addEventListener("submit", function (e) {
           e.preventDefault();
-          const btnSalvar = document.querySelector('button[type="submit"]');
+          const btnSalvar = document.querySelector('#form-jogador button[type="submit"]');
           btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
 
           const formData = new FormData();
@@ -145,7 +163,7 @@
           if (fotoInput.files.length > 0) formData.append("foto", fotoInput.files[0]);
 
           fetch("https://prettywoman.onrender.com/api/atletas", { method: "POST", body: formData })
-            .then((res) => res.json()).then((data) => {
+            .then((res) => res.json()).then(() => {
               document.getElementById("form-jogador").reset();
               btnSalvar.textContent = "Salvar Atleta"; btnSalvar.disabled = false;
               carregarElenco();
@@ -153,42 +171,131 @@
         });
 
       function abrirRaioX(id) {
-        atletaAbertoId = id; const escudo = document.getElementById("escudo-bloqueio"); const modal = document.getElementById("modal-perfil-jogador");
-        fetch(`https://prettywoman.onrender.com/api/estatisticas/atleta/${id}`).then((res) => res.json()).then((stats) => {
+        atletaAbertoId = id; 
+        const escudo = document.getElementById("escudo-bloqueio"); 
+        const modal = document.getElementById("modal-perfil-jogador");
+        
+        // 1. Coleta estatísticas básicas brutas e calcula as médias em tempo de execução
+        Promise.all([
+          fetch(`https://prettywoman.onrender.com/api/estatisticas/atleta/${id}`).then(res => res.json()),
+          fetch(`https://prettywoman.onrender.com/api/eventos/atleta/${id}`).then(res => res.json())
+        ]).then(([stats, lances]) => {
+            dadosAtletaAtualGlobal = stats; // Armazena cache para preenchimento de modal
+            
             document.getElementById("perfil-nome").textContent = stats.nome || "Desconhecido";
             document.getElementById("perfil-camisa").textContent = `Camisa ${stats.numero_camisa || "?"}`;
+            
             const divFoto = document.getElementById("perfil-foto");
-            if (stats.foto) { divFoto.style.backgroundImage = `url('https://prettywoman.onrender.com${stats.foto}')`; divFoto.style.backgroundSize = "cover"; divFoto.style.backgroundPosition = "center"; divFoto.style.color = "transparent"; } else { divFoto.style.backgroundImage = "none"; divFoto.style.color = "white"; divFoto.textContent = stats.nome ? stats.nome.charAt(0) : "?"; }
-            document.getElementById("p-gols").textContent = stats.gols || 0;
-            document.getElementById("p-passes-c").textContent = stats.passes_certos || 0;
-            document.getElementById("p-passes-e").textContent = stats.passes_errados || 0;
-            document.getElementById("p-intercep").textContent = stats.interceptacoes || 0;
-          });
+            if (stats.foto) { 
+                divFoto.style.backgroundImage = `url('https://prettywoman.onrender.com${stats.foto}')`; 
+                divFoto.style.backgroundSize = "cover"; 
+                divFoto.style.backgroundPosition = "center"; 
+                divFoto.style.color = "transparent"; 
+            } else { 
+                divFoto.style.backgroundImage = "none"; 
+                divFoto.style.color = "white"; 
+                divFoto.textContent = stats.nome ? stats.nome.charAt(0) : "?"; 
+            }
 
-        fetch(`https://prettywoman.onrender.com/api/eventos/atleta/${id}`).then((res) => res.json()).then((lances) => {
-            const campoHeatmap = document.getElementById("perfil-heatmap");
-            campoHeatmap.querySelectorAll(".mancha-calor").forEach((m) => m.remove()); 
-            lances.forEach((lance) => { const mancha = document.createElement("div"); mancha.classList.add("mancha-calor"); mancha.style.left = `${lance.coord_x}%`; mancha.style.top = `${lance.coord_y}%`; campoHeatmap.appendChild(mancha); });
-          });
+            // Descobrir partidas únicas em que o jogador teve alguma ação registrada
+            const partidasUnicas = [...new Set(lances.map(l => l.partida_id))];
+            const qtdPartidas = partidasUnicas.length || 1;
 
-        escudo.classList.add("ativo"); modal.classList.remove("escondido");
+            // Injetar médias divididas com precisão de 1 casa decimal
+            document.getElementById("p-gols").textContent = ( (stats.gols || 0) / qtdPartidas ).toFixed(1);
+            document.getElementById("p-passes-c").textContent = ( (stats.passes_certos || 0) / qtdPartidas ).toFixed(1);
+            document.getElementById("p-passes-e").textContent = ( (stats.passes_errados || 0) / qtdPartidas ).toFixed(1);
+            document.getElementById("p-intercep").textContent = ( (stats.interceptacoes || 0) / qtdPartidas ).toFixed(1);
+
+            // 2. MONTAGEM DO GRÁFICO DE EVOLUÇÃO TEMPORAL (CHART.JS)
+            // Agrupar ações por partida e gerar array de performance cronológico
+            const historicoPartidasOrdenado = partidasUnicas.sort((a,b) => a - b);
+            const dadosGols = []; const dadosPassesC = []; const dadosPassesE = []; const dadosIntercep = [];
+            const labelsPartidas = [];
+
+            historicoPartidasOrdenado.forEach((pId, index) => {
+                labelsPartidas.push(`Jogo ${index + 1}`);
+                const lancesDoJogo = lances.filter(l => l.partida_id === pId);
+                
+                dadosGols.push(lancesDoJogo.filter(l => l.tipo_acao === 'Gol').length);
+                dadosPassesC.push(lancesDoJogo.filter(l => l.tipo_acao === 'Passe Certo').length);
+                dadosPassesE.push(lancesDoJogo.filter(l => l.tipo_acao === 'Passe Errado').length);
+                dadosIntercep.push(lancesDoJogo.filter(l => l.tipo_acao === 'Interceptação').length);
+            });
+
+            // Se o jogador nunca atuou, monta um esqueleto limpo
+            if(partidasUnicas.length === 0) {
+               labelsPartidas.push("Sem Jogos"); dadosGols.push(0); dadosPassesC.push(0); dadosPassesE.push(0); dadosIntercep.push(0);
+            }
+
+            const ctx = document.getElementById('graficoEvolucao').getContext('2d');
+            if (instanciarGraficoLinhas) instanciarGraficoLinhas.destroy();
+
+            instanciarGraficoLinhas = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labelsPartidas,
+                    datasets: [
+                        { label: 'Gols', data: dadosGols, borderColor: '#FFC800', backgroundColor: 'transparent', tension: 0.2, borderWidth: 3 },
+                        { label: 'Passes Certos', data: dadosPassesC, borderColor: '#1CB0F6', backgroundColor: 'transparent', tension: 0.2, borderWidth: 3 },
+                        { label: 'Passes Errados', data: dadosPassesE, borderColor: '#FF4B4B', backgroundColor: 'transparent', tension: 0.2, borderWidth: 3 },
+                        { label: 'Interceptações', data: dadosIntercep, borderColor: '#FF9600', backgroundColor: 'transparent', tension: 0.2, borderWidth: 3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#aaa', font: { family: 'Nunito', size: 11 } } } },
+                    scales: {
+                        y: { ticks: { color: '#aaa', stepSize: 1 }, grid: { color: '#444' } },
+                        x: { ticks: { color: '#aaa' }, grid: { display: false } }
+                    }
+                }
+            });
+
+            escudo.classList.add("ativo"); modal.classList.remove("escondido");
+        });
       }
 
       document.getElementById("fechar-perfil").onclick = () => { document.getElementById("escudo-bloqueio").classList.remove("ativo"); document.getElementById("modal-perfil-jogador").classList.add("escondido"); };
 
-      function mostrarConfirmCustom(titulo, mensagem, corBotao, textoBotao, callbackSim) {
-        document.getElementById("titulo-confirm-custom").textContent = titulo; document.getElementById("texto-confirm-custom").textContent = mensagem;
-        const btnSim = document.getElementById("btn-sim-confirm"); btnSim.className = `btn-acao ${corBotao}`; btnSim.textContent = textoBotao;
-        const novoBtnSim = btnSim.cloneNode(true); btnSim.parentNode.replaceChild(novoBtnSim, btnSim);
-        novoBtnSim.addEventListener("click", () => { document.getElementById("modal-confirm-custom").classList.add("escondido"); callbackSim(); });
-        document.getElementById("modal-confirm-custom").classList.remove("escondido"); document.getElementById("modal-perfil-jogador").style.opacity = "0.3";
-      }
+      // SISTEMA INTERATIVO DE EDIÇÃO DE ATLETA
+      const modalEditarAtleta = document.getElementById("modal-editar-jogador");
+      document.getElementById("btn-editar-atleta").onclick = () => {
+          document.getElementById("edit-nome-atleta").value = dadosAtletaAtualGlobal.nome;
+          document.getElementById("edit-numero-atleta").value = dadosAtletaAtualGlobal.numero_camisa;
+          document.getElementById("edit-foto-atleta").value = ""; // Limpa campo de upload
+          
+          document.getElementById("modal-perfil-jogador").classList.add("escondido");
+          modalEditarAtleta.classList.remove("escondido");
+      };
 
-      document.getElementById("btn-nao-confirm").addEventListener("click", () => { document.getElementById("modal-confirm-custom").classList.add("escondido"); document.getElementById("modal-perfil-jogador").style.opacity = "1"; });
-      document.getElementById("btn-deletar-jogador").onclick = () => {
-        mostrarConfirmCustom("Dispensar Jogador", "Certeza que deseja excluir este atleta? TODOS os lances dele sumirão das partidas. Ação irreversível.", "btn-duo-vermelho", "Sim, Dispensar",
-          () => { fetch(`https://prettywoman.onrender.com/api/atletas/${atletaAbertoId}`, { method: "DELETE" }).then(() => { document.getElementById("modal-perfil-jogador").classList.add("escondido"); document.getElementById("modal-perfil-jogador").style.opacity = "1"; document.getElementById("escudo-bloqueio").classList.remove("ativo"); carregarElenco(); }); }
-        );
+      document.getElementById("btn-cancelar-edicao-atleta").onclick = () => {
+          modalEditarAtleta.classList.add("escondido");
+          document.getElementById("modal-perfil-jogador").classList.remove("escondido");
+      };
+
+      document.getElementById("form-editar-jogador").onsubmit = function(e) {
+          e.preventDefault();
+          const btnSubmit = modalEditarAtleta.querySelector('button[type="submit"]');
+          btnSubmit.textContent = "Sincronizando..."; btnSubmit.disabled = true;
+
+          const formEditData = new FormData();
+          formEditData.append("nome", document.getElementById("edit-nome-atleta").value);
+          formEditData.append("numero_camisa", document.getElementById("edit-numero-atleta").value);
+          
+          const fileInput = document.getElementById("edit-foto-atleta");
+          if(fileInput.files.length > 0) formEditData.append("foto", fileInput.files[0]);
+
+          fetch(`https://prettywoman.onrender.com/api/atletas/${atletaAbertoId}`, {
+              method: "PUT",
+              body: formEditData
+          }).then(res => res.json()).then((data) => {
+              btnSubmit.textContent = "Salvar Modificações"; btnSubmit.disabled = false;
+              modalEditarAtleta.classList.add("escondido");
+              document.getElementById("escudo-bloqueio").classList.remove("ativo");
+              carregarElenco();
+          });
       };
     </script>
   </body>

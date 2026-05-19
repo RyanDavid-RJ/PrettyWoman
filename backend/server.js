@@ -143,18 +143,14 @@ app.put('/api/eventos/:id', (req, res) => {
 
     conexao.query(sql, [tipo_acao, minuto_video, idLance], (erro, resultados) => {
         if (erro) return res.status(500).json({ erro: 'Erro ao atualizar' });
-        res.json({ mensagem: 'Lance atualizado com sucesso!' });
+        res.json({ message: 'Lance atualizado com sucesso!' });
     });
 });
 
 // Rota para CADASTRAR JOGADOR com foto
 app.post('/api/atletas', upload.single('foto'), (req, res) => {
     const { nome, numero_camisa } = req.body;
-    
-    // Se o cara mandou foto, guarda o caminho. Se não, fica null
     const fotoPath = req.file ? `/uploads/${req.file.filename}` : null;
-    
-    // Cadastra fixo na equipe 1 (Seleção Brasileira) por enquanto
     const sql = 'INSERT INTO atletas (nome, numero_camisa, equipe_id, foto) VALUES (?, ?, 1, ?)';
     
     conexao.query(sql, [nome, numero_camisa, fotoPath], (erro, resultados) => {
@@ -179,7 +175,31 @@ app.get('/api/atletas', (req, res) => {
 });
 
 // ==========================================
-// NOVAS ROTAS: PERFIL DO JOGADOR
+// ROTA PARA ATUALIZAR/EDITAR UM JOGADOR (NOVA)
+// ==========================================
+app.put('/api/atletas/:id', upload.single('foto'), (req, res) => {
+    const idAtleta = req.params.id;
+    const { nome, numero_camisa } = req.body;
+    
+    let sql = 'UPDATE atletas SET nome = ?, numero_camisa = ? WHERE id = ?';
+    let params = [nome, numero_camisa, idAtleta];
+    
+    if (req.file) {
+        sql = 'UPDATE atletas SET nome = ?, numero_camisa = ?, foto = ? WHERE id = ?';
+        params = [nome, numero_camisa, `/uploads/${req.file.filename}`, idAtleta];
+    }
+    
+    conexao.query(sql, params, (erro, resultados) => {
+        if (erro) {
+            console.error('Erro ao editar atleta:', erro);
+            return res.status(500).json({ erro: 'Erro ao atualizar dados do atleta' });
+        }
+        res.json({ sucesso: true, mensagem: 'Atleta modificado com sucesso!' });
+    });
+});
+
+// ==========================================
+// PERFIL E HISTÓRICO COMPLETO DO JOGADOR
 // ==========================================
 
 // 1. Busca as Estatísticas de UM jogador específico
@@ -204,10 +224,10 @@ app.get('/api/estatisticas/atleta/:id', (req, res) => {
     });
 });
 
-// 2. Busca TODOS os eventos de UM jogador (Para o Mapa de Calor Pessoal)
+// 2. Busca TODOS os eventos de UM jogador (Para o Mapa de Calor Pessoal e Gráfico de Linhas)
 app.get('/api/eventos/atleta/:id', (req, res) => {
     const idAtleta = req.params.id;
-    const sql = 'SELECT * FROM eventos_scout WHERE atleta_id = ? AND coord_x IS NOT NULL';
+    const sql = 'SELECT * FROM eventos_scout WHERE atleta_id = ? ORDER BY id ASC';
     conexao.query(sql, [idAtleta], (erro, resultados) => {
         if (erro) return res.status(500).json({ erro: 'Erro ao buscar lances do atleta' });
         res.json(resultados);
@@ -225,38 +245,21 @@ app.delete('/api/atletas/:id', (req, res) => {
     });
 });
 
-// ==========================================
 // ROTA DE LOGIN (Versão à Prova de Balas)
-// ==========================================
 app.post('/api/login', (req, res) => {
-    console.log("1. Recebi requisição de login:", req.body);
     const { email, nome } = req.body;
-
-    if (!email) {
-        console.error("Erro: Email não fornecido pelo Front-end!");
-        return res.status(400).json({ sucesso: false, erro: "Email não fornecido" });
-    }
+    if (!email) return res.status(400).json({ sucesso: false, erro: "Email não fornecido" });
 
     const sqlBusca = 'SELECT * FROM usuarios WHERE email = ?';
     conexao.query(sqlBusca, [email], (err, results) => {
-        if (err) {
-            console.error("2. ERRO FATAL no BD ao buscar usuário:", err);
-            return res.status(500).json({ sucesso: false, erro: "Erro interno no BD" });
-        }
+        if (err) return res.status(500).json({ sucesso: false, erro: "Erro interno no BD" });
 
         if (results.length > 0) {
-            console.log("3. Usuário encontrado no BD:", results[0].nome);
             return res.json({ sucesso: true, usuario: results[0] });
         } else {
-            console.log("3. Usuário novo! Tentando cadastrar o email:", email);
             const sqlInsert = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
-            
             conexao.query(sqlInsert, [nome || 'Usuário Google', email, 'google-auth'], (err2, resultInsert) => {
-                if (err2) {
-                    console.error("4. ERRO FATAL ao inserir novo usuário:", err2);
-                    return res.status(500).json({ sucesso: false, erro: "Erro ao criar usuário" });
-                }
-                console.log("4. Sucesso! Novo usuário criado com ID:", resultInsert.insertId);
+                if (err2) return res.status(500).json({ sucesso: false, erro: "Erro ao criar usuário" });
                 return res.json({ sucesso: true, usuario: { id: resultInsert.insertId, nome, email } });
             });
         }
@@ -266,14 +269,10 @@ app.post('/api/login', (req, res) => {
 // ROTA PARA CRIAR NOVA PARTIDA
 app.post('/api/partidas', (req, res) => {
     const { data_jogo, adversario, escalacao } = req.body;
-    
     const sql = 'INSERT INTO partidas (data_jogo, adversario, escalacao) VALUES (?, ?, ?)';
     
     conexao.query(sql, [data_jogo, adversario, JSON.stringify(escalacao)], (erro, resultados) => {
-        if (erro) {
-            console.error('Erro ao criar partida:', erro);
-            return res.status(500).json({ erro: 'Erro ao criar partida' });
-        }
+        if (erro) return res.status(500).json({ erro: 'Erro ao criar partida' });
         res.status(201).json({ mensagem: 'Partida criada!', id_partida: resultados.insertId });
     });
 });
@@ -287,7 +286,6 @@ app.get('/api/partidas', (req, res) => {
     });
 });
 
-// 4. Ligando o servidor
 app.listen(porta, () => {
     console.log(`🚀 Servidor rodando na porta: ${porta}`);
 });

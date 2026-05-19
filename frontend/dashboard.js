@@ -1,5 +1,7 @@
 const seletorPartida = document.getElementById('seletor-partida');
 let meuGrafico = null; 
+let filtroAtualHeatmap = 'Todos';
+let lancesMemoriaPartida = [];
 
 // 1. Carregar as partidas no Dropdown
 fetch('https://prettywoman.onrender.com/api/partidas')
@@ -33,9 +35,10 @@ function carregarDadosDaPartida(partidaId) {
     fetch(`https://prettywoman.onrender.com/api/eventos/partida/${partidaId}`)
         .then(res => res.json())
         .then(lances => {
+            lancesMemoriaPartida = lances; // Cache de lances da partida ativa
             const kpis = atualizarKPIs(lances);
             atualizarGrafico(lances);
-            atualizarHeatmap(lances);
+            atualizarHeatmap();
             gerarAnaliseIA(kpis.gols, kpis.passesC, kpis.passesE, kpis.intercep, lances);
         });
 }
@@ -59,7 +62,7 @@ function atualizarKPIs(lances) {
     return { gols, passesC, passesE, intercep };
 }
 
-// 4. A MÁGICA DA IA (Algoritmo Baseado em Regras)
+// 4. Algoritmo de Análise Tática Baseado em Regras
 function gerarAnaliseIA(gols, passesC, passesE, intercep, lances) {
     const textoIA = document.getElementById('texto-analise-ia');
     const totalPasses = passesC + passesE;
@@ -67,32 +70,29 @@ function gerarAnaliseIA(gols, passesC, passesE, intercep, lances) {
     
     let analise = "";
 
-    // Análise de Posse e Passe
     if (totalPasses === 0) {
-        analise += "A equipa ainda não registou volume de jogo suficiente para uma análise de passes. ";
+        analise += "A equipe ainda não registrou volume de jogo suficiente para uma análise de passes. ";
     } else if (precisaoPasses >= 80) {
-        analise += `<strong>Excelente retenção de bola:</strong> A equipa atingiu uma notável precisão de passes de ${precisaoPasses}%. O meio-campo demonstrou tranquilidade e controlo tático. `;
+        analise += `<strong>Excelente retenção de bola:</strong> A equipe atingiu uma notável precisão de passes de ${precisaoPasses}%. O meio-campo demonstrou tranquilidade e controle tático. `;
     } else if (precisaoPasses <= 60) {
         analise += `<strong>Alerta na construção de jogo:</strong> A precisão de passes foi perigosamente baixa (${precisaoPasses}%). O excesso de passes errados (${passesE}) sugere nervosismo ou pressão alta do adversário. Recomenda-se treinar a saída de bola curta. `;
     } else {
-        analise += `A equipa teve uma precisão de passes razoável de ${precisaoPasses}%, mas com margem para melhoria técnica. `;
+        analise += `A equipe teve uma precisão de passes razoável de ${precisaoPasses}%, mas com margem para melhoria técnica. `;
     }
 
-    // Análise Defensiva
     if (intercep >= 10) {
-        analise += `<br><br><strong>Defesa sólida:</strong> O elevado número de interceções (${intercep}) mostra um excelente posicionamento e leitura tática defensiva, destruindo as linhas de passe adversárias. `;
+        analise += `<br><br><strong>Defesa sólida:</strong> O elevado número de interceptações (${intercep}) mostra um excelente posicionamento e leitura tática defensiva, destruindo as linhas de passe adversárias. `;
     } else if (intercep < 3 && totalPasses > 10) {
-        analise += `<br><br><strong>Atenção defensiva:</strong> A equipa recuperou muito pouco a bola por interceção (${intercep}). A marcação pode estar demasiado reativa em vez de proativa. `;
+        analise += `<br><br><strong>Atenção defensiva:</strong> A equipe recuperou muito pouco a bola por interceptação (${intercep}). A marcação pode estar demasiado reativa em vez de proativa. `;
     }
 
-    // Análise Ofensiva
     const finalizacoes = lances.filter(l => l.tipo_acao === 'Finalização').length;
     if (gols >= 3) {
         analise += `<br><br><strong>Ataque Letal:</strong> A produção ofensiva foi impecável com ${gols} gol(s) marcado(s), refletindo alta eficácia no último terço do campo.`;
     } else if (gols === 0 && finalizacoes >= 5) {
-        analise += `<br><br><strong>Ineficácia ofensiva:</strong> A equipa criou oportunidades (${finalizacoes} finalizações), mas não conseguiu concretizar em golos. É necessário trabalhar a frieza na cara da baliza.`;
+        analise += `<br><br><strong>Ineficácia ofensiva:</strong> A equipe criou oportunidades (${finalizacoes} finalizações), mas não conseguiu concretizar em gols. É necessário trabalhar a frieza na cara da baliza.`;
     } else if (gols === 0 && finalizacoes < 5) {
-        analise += `<br><br><strong>Dificuldade de criação:</strong> A equipa praticamente não ameaçou a baliza adversária. Faltou profundidade e agressividade no ataque.`;
+        analise += `<br><br><strong>Dificuldade de criação:</strong> A equipe praticamente não ameaçou a baliza adversária. Faltou profundidade e agressividade no ataque.`;
     }
 
     textoIA.innerHTML = analise;
@@ -123,10 +123,11 @@ function atualizarGrafico(lances) {
         type: 'bar',
         data: {
             labels: nomes,
+            backgroundColors: [],
             datasets: [
                 { label: 'Passes Certos', data: dadosPasses, backgroundColor: '#1CB0F6', borderRadius: 4 },
-                { label: 'Remates/Golos', data: dadosFinalizacoes, backgroundColor: '#9C27B0', borderRadius: 4 },
-                { label: 'Interceções', data: dadosIntercep, backgroundColor: '#FF9600', borderRadius: 4 }
+                { label: 'Remates/Gols', data: dadosFinalizacoes, backgroundColor: '#9C27B0', borderRadius: 4 },
+                { label: 'Interceptações', data: dadosIntercep, backgroundColor: '#FF9600', borderRadius: 4 }
             ]
         },
         options: {
@@ -140,13 +141,17 @@ function atualizarGrafico(lances) {
     });
 }
 
-// 6. O Mapa de Calor (Heatmap)
-function atualizarHeatmap(lances) {
+// 6. O Mapa de Calor (Heatmap) Dinâmico Filtrável
+function atualizarHeatmap() {
     const campo = document.getElementById('campo-heatmap');
     campo.querySelectorAll('.mancha-calor').forEach(m => m.remove());
 
-    lances.forEach(lance => {
+    lancesMemoriaPartida.forEach(lance => {
         if (lance.tipo_acao === 'Substituição' || !lance.coord_x || !lance.coord_y) return;
+        
+        // Aplicação cirúrgica do filtro
+        if (filtroAtualHeatmap !== 'Todos' && lance.tipo_acao !== filtroAtualHeatmap) return;
+
         const mancha = document.createElement('div');
         mancha.classList.add('mancha-calor');
         mancha.style.left = `${lance.coord_x}%`; mancha.style.top = `${lance.coord_y}%`;
@@ -154,29 +159,32 @@ function atualizarHeatmap(lances) {
     });
 }
 
-// ==========================================
+// Captura de cliques nos botões seletores do Heatmap
+document.querySelectorAll('.btn-filtro-hm').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.btn-filtro-hm').forEach(b => b.classList.remove('ativo'));
+        e.target.classList.add('ativo');
+        filtroAtualHeatmap = e.target.getAttribute('data-filtro');
+        atualizarHeatmap();
+    });
+});
+
 // 7. EXPORTAÇÃO PARA PDF
-// ==========================================
 document.getElementById('btn-exportar-pdf').addEventListener('click', () => {
-    // Muda o botão para mostrar que está a carregar
     const btn = document.getElementById('btn-exportar-pdf');
     const textoOriginal = btn.textContent;
     btn.textContent = "A gerar PDF...";
     btn.disabled = true;
 
-    // Pega exatamente a área que queremos fotografar (área do relatório)
     const elementoParaPDF = document.getElementById('area-relatorio');
-
-    // Configurações do PDF
     const opcoes = {
-        margin:       10, // Margem em mm
-        filename:     `Relatorio_PowerSoccer.pdf`,
+        margin:       10,
+        filename:      `Relatorio_PowerSoccer.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#2D2D2D' }, // Alta resolução e fundo escuro
+        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#2D2D2D' },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Gera o PDF e volta o botão ao normal
     html2pdf().set(opcoes).from(elementoParaPDF).save().then(() => {
         btn.textContent = textoOriginal;
         btn.disabled = false;
