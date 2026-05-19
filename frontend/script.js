@@ -13,7 +13,7 @@ if (!dadosTreinador.id) {
 
 const idDoTreinador = dadosTreinador.id;
 let modoVisualizacao = localStorage.getItem('modoVisualizacao') === 'true';
-let dadosAlterados = false; // Rastreador de alterações não salvas
+let dadosAlterados = false; 
 
 const headerNome = document.getElementById('nome-treinador');
 if (headerNome && partidaInfo.adversario) headerNome.innerHTML = `<span class="destaque-adversario">vs ${partidaInfo.adversario}</span>`;
@@ -162,7 +162,6 @@ inputTempo.addEventListener('change', (e) => {
     }
 });
 
-// ====== NOVOS BOTÕES DE AJUSTE FINO (-1s e +1s) ======
 const btnMenosTempo = document.getElementById('btn-menos-tempo');
 const btnMaisTempo = document.getElementById('btn-mais-tempo');
 
@@ -171,8 +170,6 @@ function ajustarTempoFino(segundos) {
     if (tempoAtual < 0) tempoAtual = 0;
     if (tempoAtual > 2400) tempoAtual = 2400;
     inputTempo.value = tempoAtual;
-    
-    // Dispara os eventos como se o utilizador tivesse arrastado a barra manualmente
     inputTempo.dispatchEvent(new Event('input'));
     inputTempo.dispatchEvent(new Event('change'));
 }
@@ -196,8 +193,6 @@ document.addEventListener('click', (e) => {
     const titularAtivo = document.querySelector('.titulares .jogador.ativo');
 
     if (isReserva && titularAtivo) {
-
-        // TRAVA ANTI-PARADOXO: Ninguém entra ou sai se já houver um evento neste segundo exato!
         const lanceNoMesmoSegundo = lancesDaPartida.some(l => l.minuto_video === tempoAtualFormatado);
         if (lanceNoMesmoSegundo) return mostrarAlertaCustom("Tempo Ocupado!", "Já existe um registro neste exato segundo da partida. Avance ou recue o tempo em 1s na barra antes de fazer a substituição.");
         if(modoVisualizacao) return mostrarAlertaCustom("Modo Leitura", "A tela está travada. Clique em 'Alterar Partida' para fazer substituições.");
@@ -225,15 +220,11 @@ document.addEventListener('click', (e) => {
 
 document.getElementById('btn-cancelar-sub').addEventListener('click', () => { modalSubstituicao.classList.add('escondido'); escudoBloqueio.classList.remove('ativo'); });
 
-// A INTELIGÊNCIA CONTRA O PARADOXO TEMPORAL
 document.getElementById('btn-confirmar-sub').addEventListener('click', () => {
-    
-    // Verifica se o jogador saindo tem ações no futuro em relação ao momento da substituição
     const segSub = (parseInt(tempoAtualFormatado.split(':')[0]) * 60) + parseInt(tempoAtualFormatado.split(':')[1]);
     const acoesFuturas = lancesDaPartida.filter(l => l.atleta_id == idSaindo && l.tipo_acao !== 'Substituição' && ((parseInt(l.minuto_video.split(':')[0]) * 60) + parseInt(l.minuto_video.split(':')[1])) > segSub);
 
     const efetivarSubstituicao = () => {
-        // Se houver ações no futuro, apaga elas em cascata primeiro
         const promisesDelecao = acoesFuturas.map(l => fetch(`https://prettywoman.onrender.com/api/eventos/${l.id}`, { method: 'DELETE' }));
         
         Promise.all(promisesDelecao).then(() => {
@@ -247,14 +238,8 @@ document.getElementById('btn-confirmar-sub').addEventListener('click', () => {
     };
 
     if (acoesFuturas.length > 0) {
-        modalSubstituicao.classList.add('escondido'); // Esconde o modal de sub pra mostrar o de confirmação
-        mostrarConfirmCustom(
-            "Alerta de Linha do Tempo", 
-            `O jogador atual possui ${acoesFuturas.length} ações registradas DEPOIS desse minuto. Substituí-lo agora apagará essas ações do futuro. Deseja continuar?`, 
-            "btn-duo-vermelho", 
-            "Sim, Substituir e Apagar", 
-            efetivarSubstituicao
-        );
+        modalSubstituicao.classList.add('escondido');
+        mostrarConfirmCustom("Alerta de Linha do Tempo", `O jogador atual possui ${acoesFuturas.length} ações registradas DEPOIS desse minuto. Substituí-lo agora apagará essas ações do futuro. Deseja continuar?`, "btn-duo-vermelho", "Sim, Substituir e Apagar", efetivarSubstituicao);
     } else {
         efetivarSubstituicao();
     }
@@ -270,7 +255,6 @@ svgQuadra.addEventListener('click', (e) => {
 
     if (!estaEmQuadra(atletaIdSelecionado, parseInt(inputTempo.value))) return mostrarAlertaCustom("Erro", `Impossível registrar lance. O ${jogadorSelecionado} está no banco neste momento.`);
 
-    // TRAVA ANTI-PARADOXO: A bola é uma só! Ninguém joga se o segundo já estiver ocupado.
     const lanceNoMesmoSegundo = lancesDaPartida.some(l => l.minuto_video === tempoAtualFormatado);
     if (lanceNoMesmoSegundo) return mostrarAlertaCustom("Segundo Ocupado!", "Já existe uma ação anotada neste segundo exato. Avance ou recue o tempo em 1s clicando nos botões [-1s] ou [+1s] para registrar o novo lance.");
     tituloModal.textContent = `${jogadorSelecionado} aos ${tempoAtualFormatado}`;
@@ -317,8 +301,21 @@ function reorganizarTitularesEReservas(sAtual) {
         const id = parseInt(div.getAttribute('data-id')); const isTitular = estaEmQuadra(id, sAtual); let fDiv = div.querySelector('.foto');
         if (isTitular) {
             containerTitulares.appendChild(div);
-            if (!fDiv) { fDiv = document.createElement('div'); fDiv.classList.add('foto'); const fReal = div.getAttribute('data-foto');
-                if (fReal && fReal !== 'null' && fReal !== '') { fDiv.classList.add('foto-bg-custom'); fDiv.style.backgroundImage = `url('https://prettywoman.onrender.com${fReal}')`; } else { fDiv.textContent = div.querySelector('span').textContent.charAt(0); } div.prepend(fDiv); }
+            if (!fDiv) { 
+                fDiv = document.createElement('div'); 
+                fDiv.classList.add('foto'); 
+                const fReal = div.getAttribute('data-foto');
+                
+                if (fReal && fReal !== 'null' && fReal !== '') { 
+                    fDiv.classList.add('foto-bg-custom'); 
+                    // CORREÇÃO: Lê do Cloudinary se já tiver "http"
+                    let urlQuadraFinal = fReal.startsWith('http') ? fReal : `https://prettywoman.onrender.com${fReal}`;
+                    fDiv.style.backgroundImage = `url('${urlQuadraFinal}')`; 
+                } else { 
+                    fDiv.textContent = div.querySelector('span').textContent.charAt(0); 
+                } 
+                div.prepend(fDiv); 
+            }
         } else { containerReservas.appendChild(div); if (fDiv) fDiv.remove(); }
     });
 }
@@ -344,7 +341,6 @@ function renderizarMapaELista() {
         if(lance.tipo_acao === 'Substituição') {
             const item = document.createElement('div'); item.classList.add('item-historico');
             
-            // A BLINDAGEM DO CARTÃO VERDE E VERMELHO REFATORADA PARA CSS
             if (lance.atleta_id === atletaIdSelecionado) {
                 item.classList.add('item-historico-saida');
                 item.innerHTML = `<div class="info-historico-sub"><strong>🔄 FOI SUBSTITUÍDO (Banco)</strong> <br><small>⏱️ ${lance.minuto_video}</small></div>
@@ -374,7 +370,7 @@ function renderizarMapaELista() {
 }
 
 // ==========================================
-// 9. EDIÇÃO, ELIMINAÇÃO E EFEITO DOMINÓ
+// 9. EDIÇÃO E ELIMINAÇÃO EM CASCATA
 // ==========================================
 function abrirModalEdicao(e, id, acaoAtual, minutoAtual) { 
     e.stopPropagation(); 
@@ -390,29 +386,13 @@ document.getElementById('btn-salvar-edicao').addEventListener('click', () => {
 });
 
 document.getElementById('btn-eliminar-definitivo').addEventListener('click', () => {
-
-    // 🔥 FECHA O MODAL ATUAL PRIMEIRO
     modalEdicao.classList.add('escondido');
-
-    mostrarConfirmCustom(
-        "Excluir Lance",
-        "Deseja realmente apagar esta ação da partida?",
-        "btn-duo-vermelho",
-        "Sim, Excluir",
-        () => {
-            fetch(`https://prettywoman.onrender.com/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' })
-                .then(() => {
-                    dadosAlterados = true;
-                    carregarDadosDoBanco();
-
-                    // 🔥 GARANTE QUE O BLOQUEIO SOME SÓ NO FINAL
-                    escudoBloqueio.classList.remove('ativo');
-                });
-        }
-    );
+    mostrarConfirmCustom("Excluir Lance", "Deseja realmente apagar esta ação da partida?", "btn-duo-vermelho", "Sim, Excluir", () => {
+        fetch(`https://prettywoman.onrender.com/api/eventos/${idLanceEmEdicao}`, { method: 'DELETE' })
+            .then(() => { dadosAlterados = true; carregarDadosDoBanco(); escudoBloqueio.classList.remove('ativo'); });
+    });
 });
 
-// A INTELIGÊNCIA EM CASCATA (EFEITO DOMINÓ)
 function deletarSubstituicao(e, lanceId, idQuemEntrou, minutoSubCancelada) {
     e.stopPropagation();
     if(modoVisualizacao) return mostrarAlertaCustom("Modo Leitura", "Clique em 'Alterar Partida' para desfazer substituições.");
@@ -443,10 +423,7 @@ function deletarSubstituicao(e, lanceId, idQuemEntrou, minutoSubCancelada) {
 
     mostrarConfirmCustom("Cancelar Substituição", aviso, "btn-duo-vermelho", "Sim, Apagar Tudo", () => {
         Promise.all(idsParaDeletar.map(id => fetch(`https://prettywoman.onrender.com/api/eventos/${id}`, { method: 'DELETE' })))
-        .then(() => {
-            dadosAlterados = true;
-            setTimeout(() => carregarDadosDoBanco(), 500); 
-        });
+        .then(() => { dadosAlterados = true; setTimeout(() => carregarDadosDoBanco(), 500); });
     });
 }
 
