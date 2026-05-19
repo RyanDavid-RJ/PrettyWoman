@@ -38,6 +38,16 @@ body.light-mode {
   --input-bg: #eaeaea;
 }
 
+/* --- MODO CLARO - CORREÇÃO DE SLOTS DA NOVA PARTIDA --- */
+body.light-mode .slot {
+  border-color: #bbbbbb !important;
+  background-color: #e5e5e5 !important;
+}
+body.light-mode .slot-foto {
+  background-color: #d2d2d2 !important;
+  color: #1a1a1a !important;
+}
+
 /* --- MODO DALTÔNICO --- */
 body.daltonico-mode {
   --duo-green-primary: #1cb0f6;
@@ -274,6 +284,7 @@ input[type="range"] {
 }
 .btn-duo-azul {
   background-color: var(--duo-blue);
+  color: white;
 }
 .btn-duo-vermelho {
   background-color: var(--duo-red);
@@ -521,60 +532,6 @@ input[type="range"]:active::-webkit-slider-thumb {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Animações para Splash Screen - Vibração/Tremor + Zoom-In */
-@keyframes vibrarZoom {
-  0% {
-    transform: scale(0.8) translateX(0);
-    opacity: 0;
-  }
-  10% {
-    transform: scale(1.05) translateX(-2px);
-    opacity: 1;
-  }
-  20% {
-    transform: scale(1.1) translateX(2px);
-  }
-  30% {
-    transform: scale(1.05) translateX(-1px);
-  }
-  40% {
-    transform: scale(1.08) translateX(1px);
-  }
-  50% {
-    transform: scale(1.05) translateX(-0.5px);
-  }
-  60% {
-    transform: scale(1.06) translateX(0.5px);
-  }
-  70% {
-    transform: scale(1.05) translateX(-0.3px);
-  }
-  80% {
-    transform: scale(1.05) translateX(0.3px);
-  }
-  90% {
-    transform: scale(1.05) translateX(-0.1px);
-  }
-  100% {
-    transform: scale(1.05) translateX(0);
-  }
-}
-
-.splash-imagem-animada {
-  animation: vibrarZoom 2s ease-in-out infinite;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
-}
-.esconder-splash {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease-in-out, visibility 0.5s;
-}
-
-.esconder-splash .splash-imagem-animada {
-  animation: none !important;
-  opacity: 0;
 }
 
 /* Páginas Específicas */
@@ -1210,136 +1167,57 @@ body.login-page {
 }
 
 /* ==================================================================
-   4. RESPONSIVIDADE (MOBILE FIRST & MEDIA QUERIES)
+   4. CLASSES EXTRA DO DASHBOARD E NOVA PARTIDA (ESTILIZADOS)
    ================================================================== */
-
-@media (max-width: 1024px) {
-  .layout-principal {
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 10px;
-  }
-  .titulares,
-  .historico,
-  .linha-tempo-container,
-  .reservas {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-  .titulares {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-  }
-  .titulares .jogador {
-    margin-bottom: 0;
-  }
-  .duo-header {
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px;
-    text-align: center;
-  }
-  .header-actions {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .config-container {
-    padding: 15px;
-  }
+.filtros-heatmap {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
 }
-
-@media (max-width: 1200px) {
-  .home-grid {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 800px;
-  }
+.btn-filtro-hm {
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  border: 2px solid var(--border-ui);
+  padding: 6px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font-primary);
+  font-size: 13px;
+  transition: all 0.2s ease;
 }
-
-@media (max-width: 600px) {
-  .titulares {
-    grid-template-columns: 1fr 1fr;
-  }
-  .splash-logo {
-    font-size: 40px;
-  }
-  .kpi-card .valor {
-    font-size: 28px;
-  }
-  .kpi-card {
-    padding: 15px;
-  }
-  .home-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    margin: 30px auto;
-    padding: 15px;
-    max-width: 400px;
-  }
-  .card-home {
-    padding: 25px 20px;
-    min-height: 280px;
-  }
-  .card-home h2 {
-    font-size: 20px;
-  }
-  .card-icon svg {
-    width: 50px;
-    height: 50px;
-  }
+.btn-filtro-hm:hover {
+  filter: brightness(1.1);
 }
-
-/* ==================================================================
-   5. CLASSES DE REFATORAÇÃO (Substituindo inline styles)
-   ================================================================== */
-/* Utilitários de Layout */
-.flex-center { display: flex; justify-content: center; align-items: center; }
-.btn-block { width: 100%; }
-.btn-block-large { width: 100%; font-size: 18px; }
-.btn-flex { flex: 1; margin: 0; }
-.btn-remover-gaveta { width: 100%; margin-bottom: 20px; }
-
-/* Cores de Texto Dinâmicas */
-.cor-duo-blue { color: var(--duo-blue); }
-.cor-duo-orange { color: var(--duo-orange); }
-.cor-duo-purple { color: var(--duo-purple); }
-.cor-duo-yellow { color: var(--duo-yellow); }
-.cor-duo-red { color: var(--duo-red); }
-.cor-branca { color: #ffffff; }
-
-/* Modais Estendidos */
-.modal-sm { width: 200px; }
-.modal-md { width: 300px; }
-.modal-camisa { width: 280px; }
-.modal-lg { width: 90%; max-width: 800px; }
-
-/* Nova Partida & Partidas */
-.titulo-secao-titulares { margin-top: 30px; color: var(--duo-blue); }
-.titulo-secao-reservas { margin-top: 20px; color: #aaa; }
-.titulo-gaveta { margin-bottom: 20px; text-align: center; }
-.partida-card-titulo { font-size: 18px; color: var(--text-main); }
-.partida-card-icone { font-size: 24px; color: var(--text-main); }
-
-/* Elenco e Perfil (jogadores.html) */
-.perfil-foto-detalhe { width: 100px; height: 100px; font-size: 40px; }
-.perfil-info-text { text-align: left; }
-.perfil-nome { margin-bottom: 5px; }
-.badge-camisa { background: var(--duo-green-primary); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; display: inline-block; }
-.card-atleta-nome { margin: 0; color: var(--text-main); }
-.foto-bg-custom { background-size: cover; background-position: center; color: transparent; }
-
-/* Prancheta Tática (index.html) */
-.label-tempo { display: flex; align-items: center; gap: 10px; }
-.badge-tempo { color: var(--text-main); font-weight: 900; font-size: 1.2em; background: var(--bg-primary); padding: 4px 12px; border-radius: 8px; border: 2px solid var(--border-ui); letter-spacing: 1px; }
-.controles-tempo { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
-.btn-tempo-ajuste { width: auto; padding: 5px 15px; margin: 0; border-radius: 8px; }
-.input-range-tempo { margin: 0; flex: 1; }
-.svg-heatmap-overlay { position: absolute; z-index: 1; }
-
-/* Histórico de Lances e Substituições (script.js) */
-.destaque-adversario { color: var(--duo-blue); }
-.item-historico-saida { background-color: var(--duo-red); color: white; }
-.item-historico-entrada { background-color: var(--duo-green-primary); color: white; }
-.info-historico-sub { width: 100%; text-align: center; color: black; }
-.btn-excluir-sub { color: white; opacity: 1; }
+.btn-filtro-hm.ativo {
+  background-color: var(--duo-green-primary);
+  color: white;
+  border-color: var(--duo-green-primary);
+}
+.titulo-secao-titulares-svg {
+  margin-top: 30px; 
+  color: var(--duo-blue); 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+}
+.titulo-secao-reservas-svg {
+  margin-top: 20px; 
+  color: #aaa; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+}
+.btn-flex-center {
+  width: 100%; 
+  font-size: 18px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 10px;
+}
+.svg-icon-duo {
+  vertical-align: middle;
+}
