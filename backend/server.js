@@ -5,6 +5,8 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const porta = process.env.PORT || 3000;
@@ -15,25 +17,22 @@ app.use(cors());
 // Permite que a API receba os dados das coordenadas em formato JSON
 app.use(express.json());
 
-// Cria a pasta "uploads" automaticamente se ela não existir
-const dir = './uploads';
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-}
+// Configuração do Cloudinary
+cloudinary.config({
+  cloud_name: 'dupo1z8a6',
+  api_key: '567877496616656',
+  api_secret: 'OHss1Yjq6QK-SM0b5wl7IGLvgB0'
+});
 
-// Configuração do Multer (Cria o nome do arquivo com a data atual para não repetir)
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
+// Configuração do Multer com Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'power_soccer_elenco',
+    allowed_formats: ['jpg', 'png', 'jpeg']
+  },
 });
 const upload = multer({ storage: storage });
-
-// PERMISSÃO MÁGICA: Permite que o frontend acesse a pasta uploads livremente
-app.use('/uploads', express.static('uploads'));
 
 // 1. Criando a conexão com o banco de dados (Preparado para a Nuvem com SSL e POOL)
 const conexao = mysql.createPool({
@@ -150,7 +149,7 @@ app.put('/api/eventos/:id', (req, res) => {
 // Rota para CADASTRAR JOGADOR com foto
 app.post('/api/atletas', upload.single('foto'), (req, res) => {
     const { nome, numero_camisa } = req.body;
-    const fotoPath = req.file ? `/uploads/${req.file.filename}` : null;
+    const fotoPath = req.file ? req.file.path : null;
     const sql = 'INSERT INTO atletas (nome, numero_camisa, equipe_id, foto) VALUES (?, ?, 1, ?)';
     
     conexao.query(sql, [nome, numero_camisa, fotoPath], (erro, resultados) => {
@@ -186,7 +185,7 @@ app.put('/api/atletas/:id', upload.single('foto'), (req, res) => {
     
     if (req.file) {
         sql = 'UPDATE atletas SET nome = ?, numero_camisa = ?, foto = ? WHERE id = ?';
-        params = [nome, numero_camisa, `/uploads/${req.file.filename}`, idAtleta];
+        params = [nome, numero_camisa, req.file.path, idAtleta];
     }
     
     conexao.query(sql, params, (erro, resultados) => {
